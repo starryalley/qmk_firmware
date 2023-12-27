@@ -77,4 +77,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_MATRIX_KEYRELEASES
 
+// caps word
+#define DOUBLE_TAP_SHIFT_TURNS_ON_CAPS_WORD
+
+// tap-hold settings
+#define HOLD_ON_OTHER_KEY_PRESS
+#define QUICK_TAP_TERM 100
+#define RETRO_TAPPING
 
