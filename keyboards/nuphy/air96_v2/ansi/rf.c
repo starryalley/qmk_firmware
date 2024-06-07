@@ -38,10 +38,10 @@ bool f_goto_deepsleep  = 0;
 bool f_wakeup_prepare  = 0;
 bool f_rf_sleep        = 0;
 
-uint8_t  func_tab[32]           = {0};
-uint8_t  sync_lost              = 0;
-uint8_t  rf_disconnect_delay    = 0;
-uint32_t uart_rpt_timer         = 0;
+uint8_t  func_tab[32]        = {0};
+uint8_t  sync_lost           = 0;
+uint8_t  rf_disconnect_delay = 0;
+uint32_t uart_rpt_timer      = 0;
 
 report_buffer_t byte_report_buff = {0};
 report_buffer_t bit_report_buff  = {0};
@@ -68,6 +68,7 @@ static uint8_t get_repeat_interval(void) {
 
     if (interval < 10) { return 20; }
     return 50;
+
 }
 
 /**
@@ -90,7 +91,7 @@ void uart_send_repeat_from_queue(void) {
     static uint32_t        dequeue_timer = 0;
     static report_buffer_t report_buff   = {0};
 
-    if (timer_elapsed32(dequeue_timer) > 10 && !rf_queue.is_empty()) {
+    if (timer_elapsed32(dequeue_timer) > 10 && !rf_queue.is_empty()) { //50
         rf_queue.dequeue(&report_buff);
         dequeue_timer = timer_read32();
     }
@@ -100,6 +101,7 @@ void uart_send_repeat_from_queue(void) {
         clear_report_buffer_and_queue();
         if (report_buff.length > 6) { byte_report_buff = report_buff; }
     }
+
     if (report_buff.repeat < 24) {
         uart_send_report(report_buff.cmd, report_buff.buffer, report_buff.length);
         report_buff.repeat++;
@@ -114,7 +116,6 @@ void uart_send_report_repeat(void) {
     if (dev_info.link_mode == LINK_USB) { return; }
 
     if (dev_info.rf_state != RF_CONNECT) {
-        // toss away queue after some time if disconnected to prevent sending random keys
         if (no_act_time > 600) { clear_report_buffer_and_queue(); }
         return;
     }
@@ -130,7 +131,7 @@ void uart_send_report_repeat(void) {
     uint8_t interval = get_repeat_interval();
 
     if (timer_elapsed32(uart_rpt_timer) >= interval) {
-        if (no_act_time <= 75) { // increments every 10ms, 40 = 400ms
+        if (no_act_time <= 75) { // increments every 10ms, 50 = 500ms
             if (byte_report_buff.cmd) {
                 uart_send_report(byte_report_buff.cmd, byte_report_buff.buffer, byte_report_buff.length);
                 byte_report_buff.repeat++;
@@ -141,6 +142,7 @@ void uart_send_report_repeat(void) {
                 uart_send_report(bit_report_buff.cmd, bit_report_buff.buffer, bit_report_buff.length);
                 bit_report_buff.repeat++;
             }
+
         } else {
             clear_report_buffer_and_queue();
         }
@@ -212,7 +214,6 @@ void rf_protocol_receive(void) {
                     }
                     bat_per_debounce++;
                     if (dev_info.rf_charge & 0x01) { dev_info.rf_battery = 100; }
-
                 } else {
                     if (dev_info.rf_state != RF_INVAILD) {
                         if (error_cnt >= 5) {
@@ -342,8 +343,8 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
             Usart_Mgr.TXDBuf[12] = 'A';
             Usart_Mgr.TXDBuf[13] = 'i';
             Usart_Mgr.TXDBuf[14] = 'r';
-            Usart_Mgr.TXDBuf[15] = '7';
-            Usart_Mgr.TXDBuf[16] = '5';
+            Usart_Mgr.TXDBuf[15] = '9';
+            Usart_Mgr.TXDBuf[16] = '6';
             Usart_Mgr.TXDBuf[17] = ' ';
             Usart_Mgr.TXDBuf[18] = 'V';
             Usart_Mgr.TXDBuf[19] = '2';
@@ -443,7 +444,6 @@ void dev_sts_sync(void) {
         }
     }
 
- 
     /** This is called in house keeping with 1ms delay and
      *  1ms wait time originally. Set to 0 the wait time to not hold up housekeeping
      *  if RF is sleeping we don't want to sync and wakeup the RF

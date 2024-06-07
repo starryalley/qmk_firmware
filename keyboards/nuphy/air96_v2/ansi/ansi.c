@@ -19,18 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "mcu_pwr.h"
 
-/*
-typedef void    (*rgb_func_pointer)(void);
-void            rgb_process_record_helper(const rgb_func_pointer rgb_func_noeeprom);
-typedef void    (*side_func_pointer)(uint8_t adjust);
-void            side_process_record_helper(const side_func_pointer side_func_noeeprom, uint8_t adjust);
-*/
-
 /* qmk pre-process record */
-
 bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     no_act_time      = 0;
     rf_linking_time  = 0;
+
 
     // wake up immediately
     if (f_wakeup_prepare) {
@@ -43,9 +36,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     }
 
     return true;
-
 }
-
 
 /* qmk process record */
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
@@ -93,7 +84,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-
     switch (keycode) {
         case RF_DFU:
             if (record->event.pressed) {
@@ -129,15 +119,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-        case DEV_RESET:
-            if (record->event.pressed) {
-                f_dev_reset_press = 1;
-                break_all_key();
-            } else {
-                f_dev_reset_press = 0;
-            }
-            return false;
-
         case GAME_MODE:
             if (record->event.pressed) {
                 game_mode_enable = !game_mode_enable;
@@ -153,6 +134,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 keymap_config.no_gui = !keymap_config.no_gui;
                 signal_rgb_led(!keymap_config.no_gui, WIN_LED, WIN_LED, 3000);
+                // eeconfig_update_keymap(keymap_config.raw);
             }
             return false;
 
@@ -321,6 +303,15 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
+        case DEV_RESET:
+            if (record->event.pressed) {
+                f_dev_reset_press = 1;
+                break_all_key();
+            } else {
+                f_dev_reset_press = 0;
+            }
+            return false;
+
         case SLEEP_MODE:
             if (record->event.pressed) {
                 user_config.sleep_mode++;
@@ -329,7 +320,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                     sleep_time_delay = (NO_ACT_TIME_MINUTE * (4 * user_config.sleep_mode - 2));
                 } else { user_config.sleep_mode = 0; }
                 sleep_show_timer = timer_read32();
-            } 
+            }
             return false;
 
         case BAT_SHOW:
@@ -352,9 +343,11 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                     tap_code(KC_INS);
                     f_numlock_press = 0;
                 } else { f_numlock_press = 1; }
-            } else if (f_numlock_press) {
-                f_numlock_press = 0;
-                tap_code(KC_INS);
+            } else {
+                if (f_numlock_press) {
+                    f_numlock_press = 0;
+                    tap_code(KC_INS);
+                }
             }
             return false;
 
@@ -366,7 +359,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             return false;
 
         case SLEEP_NOW:
-            if (record->event.pressed) { 
+            if (record->event.pressed) {
                 wait_ms(100);
             } else {
                 if (user_config.sleep_mode == 0) { return true; }
@@ -375,7 +368,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                     f_goto_deepsleep  = 1;
                 }
             }
-
             return true;
 
         default:
@@ -423,14 +415,7 @@ void rgb_process_record_helper(const rgb_func_pointer rgb_func_noeeprom) {
     eeprom_update_timer = 0;
     rgb_update = 1;
 }
-
-void side_process_record_helper(const side_func_pointer side_func_noeeprom, uint8_t adjust) {
-    side_func_noeeprom(adjust);
-    eeprom_update_timer = 0;
-    user_update = 1;
-}
 */
-
 
 /* qmk housekeeping task */
 void housekeeping_task_kb(void) {
@@ -443,7 +428,7 @@ void housekeeping_task_kb(void) {
     dev_sts_sync();
 
     custom_key_press();
-//
+
     led_show();
 
 #ifndef NO_DEBUG

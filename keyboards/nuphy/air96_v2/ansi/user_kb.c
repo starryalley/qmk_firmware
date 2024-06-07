@@ -38,7 +38,6 @@ bool f_bat_num_show     = 0;
 bool f_caps_word_tg     = 0;
 bool f_numlock_press    = 0;
 
-
 uint8_t        rf_blink_cnt          = 0;
 uint8_t        rf_sw_temp            = 0;
 uint8_t        host_mode             = 0;
@@ -58,7 +57,6 @@ host_driver_t *m_host_driver         = 0;
 uint16_t       link_timeout          = NO_ACT_TIME_MINUTE;
 uint16_t       sleep_time_delay      = NO_ACT_TIME_MINUTE * 2;
 uint32_t       deep_sleep_delay      = NO_ACT_TIME_MINUTE * 6;
-
 uint32_t       eeprom_update_timer   = 0;
 bool           user_update           = 0;
 bool           rgb_update            = 0;
@@ -70,15 +68,12 @@ extern host_driver_t      rf_host_driver;
  */
 void gpio_init(void) {
     /* power on all LEDs */
-    pwr_rgb_led_on();
-    pwr_side_led_on();
-    /* set side led pin output low */
-    gpio_set_pin_output(DRIVER_SIDE_PIN);
-    gpio_write_pin_low(DRIVER_SIDE_PIN);
+    pwr_led_on();
     /* config RF module pin */
     gpio_set_pin_output(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
-    gpio_set_pin_input_high(NRF_TEST_PIN);
+    /* set RF module boot pin high */
+    gpio_set_pin_input_high(NRF_BOOT_PIN);
     /* reset RF module */
     gpio_set_pin_output(NRF_RESET_PIN);
     gpio_write_pin_low(NRF_RESET_PIN);
@@ -97,7 +92,6 @@ void set_link_mode(void) {
     dev_info.ble_channel = rf_sw_temp;
 }
 
-
 /**
  * @brief  long press key process.
  */
@@ -112,7 +106,6 @@ void custom_key_press(void) {
     // Open a new RF device
     if (f_rf_sw_press) {
         rf_sw_press_delay++;
-        
         if (rf_sw_press_delay >= MEDIUM_PRESS_DELAY) {
             set_link_mode();
             uint8_t timeout = 5;
@@ -140,7 +133,7 @@ void custom_key_press(void) {
                 if (dev_info.link_mode != LINK_RF_24) {
                     dev_info.link_mode   = LINK_BT_1;
                 }
-            }
+            } 
 
             uart_send_cmd(CMD_SET_LINK, 10, 10);
             wait_ms(500);
@@ -153,9 +146,9 @@ void custom_key_press(void) {
             device_reset_show();
             device_reset_init();
             eeconfig_update_rgb_matrix_default();
+
             dev_info.sys_sw_state = 0;
             dial_sw_fast_scan();
-
 
         }
     } else {
@@ -173,18 +166,17 @@ void custom_key_press(void) {
         rgb_test_press_delay = 0;
     }
 
-    // NumLock Press
+    // Trigger NumLock
     if (f_numlock_press) {
         numlock_press_delay++;
         if (numlock_press_delay >= MICRO_PRESS_DELAY) {
             tap_code(KC_NUM);
             f_numlock_press = 0;
         }
-    } else {
+    }  else {
         numlock_press_delay = 0;
     }
 
-    // Toggle Caps Word
     if (f_caps_word_tg) {
         caps_word_tg_delay++;
         if (caps_word_tg_delay >= SMALL_PRESS_DELAY) {
@@ -195,7 +187,8 @@ void custom_key_press(void) {
 #endif
             signal_rgb_led(user_config.caps_word_enable, CAPS_LED, CAPS_LED, CAPS_WORD_IDLE_TIMEOUT);
         }
-    } else {
+    }
+    else {
         caps_word_tg_delay = 0;
     }
 
@@ -289,14 +282,15 @@ void dial_sw_scan(void) {
     uint8_t         dial_scan       = 0;
     static uint8_t  dial_save       = 0xf0;
     static uint8_t  debounce        = 0;
+
     dial_scan       = dial_read();
 
     if (dial_save != dial_scan) {
         break_all_key();
 
-        no_act_time       = 0;
-        rf_linking_time   = 0;
-        f_wakeup_prepare  = 0;
+        no_act_time      = 0;
+        rf_linking_time  = 0;
+        f_wakeup_prepare = 0;
 
         dial_save         = dial_scan;
         debounce          = 5;
@@ -318,14 +312,13 @@ void dial_sw_scan(void) {
     }
 }
 
-
 /**
  * @brief  power on scan dial switch.
  */
 void dial_sw_fast_scan(void) {
-    uint8_t         dial_scan   = 0;
-    uint8_t         dial_check  = 0xf0;
-    uint8_t         debounce    = 0;
+    uint8_t         dial_scan        = 0;
+    uint8_t         dial_check       = 0xf0;
+    uint8_t         debounce         = 0;
 
     // Debounce to get a stable state
     for (debounce = 0; debounce < 10; debounce++) {
@@ -407,7 +400,7 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
-        pwr_rgb_led_on();
+        pwr_led_on();
         rgb_matrix_mode_noeeprom(RGB_MATRIX_GAME_MODE);
         rgb_matrix_config.hsv.v = RGB_MATRIX_GAME_MODE_VAL;
         user_config.ee_side_mode   = 2;
@@ -430,6 +423,7 @@ void user_debug(void) {
             debug_enable = false;
             print("DEBUG: disabled.\n");
         }
+
         last_print = no_act_time;
         dprintf("no_act_time: %lds\n", no_act_time / 100);
     }
@@ -441,6 +435,7 @@ void user_debug(void) {
  */
 void user_config_reset(void) {
     /* first power on, set rgb matrix brightness at middle level*/
+    // rgb_matrix_sethsv(RGB_HUE_INIT, 255, RGB_MATRIX_MAXIMUM_BRIGHTNESS - RGB_MATRIX_VAL_STEP * 2);
 
     user_config.init_layer              = 100;
     user_config.ee_side_mode            = 0;
@@ -456,13 +451,19 @@ void user_config_reset(void) {
     eeconfig_update_kb_datablock(&user_config);
 }
 
+/**
+ * @brief Handle LED power
+ * @note Turn off LEDs if not used to save some power. This is ported
+ *       from older Nuphy leaks.
+ */
+
 void matrix_io_delay(void) {
 #if (MCU_SLEEP_ENABLE)
     if (MATRIX_IO_DELAY == 0 || game_mode_enable == 1 || f_rf_sleep) {
 #else
     if (MATRIX_IO_DELAY == 0 || game_mode_enable == 1) {
 #endif
-        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory"); // sleep 0.3125 us (312.5 ns)
+        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory");  // sleep 0.3125 us (312.5 ns)
         return;
     }
 
@@ -471,11 +472,6 @@ void matrix_io_delay(void) {
     wait_us(MATRIX_IO_DELAY);
 }
 
-/**
- * @brief Handle LED power
- * @note Turn off LEDs if not used to save some power. This is ported
- *       from older Nuphy leaks.
- */
 void led_power_handle(void) {
     static uint32_t interval    = 0;
     static uint8_t led_debounce = 4;
@@ -484,23 +480,16 @@ void led_power_handle(void) {
         return;
     }
 
-    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || rgb_required) {
-        pwr_rgb_led_on();
+    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || !is_side_rgb_off() || rgb_required) { 
         rgb_required = 0;
-    } else if (timer_elapsed32(interval) > 500) { // brightness is 0 or RGB off.
-        pwr_rgb_led_off();
-    }
-
-    if (!is_side_rgb_off()) {
-        pwr_side_led_on();
         led_debounce = 4;
+        pwr_led_on();
     } else if (led_debounce--) {
         interval = timer_read32();
         return;
-    } else if (timer_elapsed32(interval) > 500) {
-        pwr_side_led_off();
+    } else if (timer_elapsed32(interval) > 500) { // brightness is 0 or RGB off.
+        pwr_led_off();
     }
 
     interval = timer_read32();
-
 }

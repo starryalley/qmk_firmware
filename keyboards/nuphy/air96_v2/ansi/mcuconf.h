@@ -17,4 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-extern host_driver_t rf_host_driver;
+#include_next <mcuconf.h>
+
+#undef STM32_SERIAL_USE_USART1
+#define STM32_SERIAL_USE_USART1 TRUE
+
+#undef STM32_I2C_USE_I2C1
+#define STM32_I2C_USE_I2C1 TRUE
+
+#undef STM32_I2C_USE_DMA
+#define STM32_I2C_USE_DMA FALSE

@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mcu_pwr.h"
 #include "rf_queue.h"
 
-// deep sleep process
 void deep_sleep_handle(void) {
     signal_sleep(0x00, dev_info.link_mode == LINK_RF_24 ? 0x80 : 0x00, dev_info.link_mode == LINK_RF_24 ? 0x00 : 0x80);
     // Sync again before sleeping
@@ -46,9 +45,8 @@ void sleep_handle(void) {
 
     /* 500ms interval */
     if (timer_elapsed32(delay_step_timer) < 500) { return; }
-    delay_step_timer = timer_read32();
+        delay_step_timer = timer_read32();
 
-    // deep sleep check
     if (user_config.sleep_mode != 1 || f_rf_sleep) {
         f_goto_deepsleep = 0;
     } else if (no_act_time >= deep_sleep_delay) {
@@ -66,7 +64,7 @@ void sleep_handle(void) {
 
     // sleep process
     if (f_goto_sleep) {
-        f_goto_sleep     = 0;
+        f_goto_sleep       = 0;
         enter_light_sleep();
         f_wakeup_prepare = 1;
     }

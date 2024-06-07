@@ -109,16 +109,16 @@ typedef enum {
 #define MEDIUM_PRESS_DELAY      30
 #define LONG_PRESS_DELAY        50
 
-#define NO_ACT_TIME_MINUTE      (100 * 60)
+#define NO_ACT_TIME_MINUTE      (60 * 100)
 
 #define RGB_MATRIX_GAME_MODE                RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define RGB_MATRIX_GAME_MODE_VAL            RGB_MATRIX_MAXIMUM_BRIGHTNESS - RGB_MATRIX_VAL_STEP * 2
 #define SIDE_MATRIX_GAME_MODE               4
 
-#define    CAPS_LED            59
-#define    LSHIFT_LED          60
-#define    WIN_LED             82
-#define    NUMLOCK_LED         14
+#define    CAPS_LED            55
+#define    LSHIFT_LED          71
+#define    WIN_LED             89
+#define    NUMLOCK_LED         33
 
 #define USB_ACTIVE              ((dev_info.link_mode == LINK_USB && USB_DRIVER.state != USB_SUSPENDED) || (dev_info.link_mode != LINK_USB && dev_info.rf_charge == 0x03))
 
@@ -196,10 +196,10 @@ extern bool               f_wakeup_prepare;
 extern bool               f_goto_sleep;
 extern bool               f_goto_deepsleep;
 
+
 extern uint32_t           eeprom_update_timer;
 extern bool               rgb_update;
 extern bool               user_update;
-extern bool               flush_side_leds;
 extern bool               rgb_required;
 
 extern bool               is_side_rgb_off(void);
@@ -231,8 +231,8 @@ void    load_eeprom_data(void);
 void    delay_update_eeprom_data(void);
 void    user_config_reset(void);
 void    led_power_handle(void);
-void    matrix_io_delay(void);
 void    set_link_mode(void);
+void    matrix_io_delay(void);
 void    game_mode_tweak(void);
 void    user_debug(void);
 void    call_update_eeprom_data(bool* eeprom_update_init);
