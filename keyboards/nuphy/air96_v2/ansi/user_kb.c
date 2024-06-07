@@ -28,7 +28,6 @@ DEV_INFO_STRUCT dev_info = {
 };
 bool f_bat_hold         = 0;
 bool game_mode_enable   = 0;
-bool rgb_required       = 0;
 bool f_send_channel     = 0;
 bool f_dial_sw_init_ok  = 0;
 bool f_rf_sw_press      = 0;
@@ -38,6 +37,7 @@ bool f_bat_num_show     = 0;
 bool f_caps_word_tg     = 0;
 bool f_numlock_press    = 0;
 
+uint8_t        rgb_required          = 0;
 uint8_t        rf_blink_cnt          = 0;
 uint8_t        rf_sw_temp            = 0;
 uint8_t        host_mode             = 0;
@@ -476,11 +476,11 @@ void led_power_handle(void) {
     static uint32_t interval    = 0;
     static uint8_t led_debounce = 4;
 
-    if ((timer_elapsed32(interval) < 500 || f_wakeup_prepare || game_mode_enable) && !rgb_required) { // only check once in a while, less flickering for unhandled cases
+    if ((timer_elapsed32(interval) < 500 || f_wakeup_prepare || game_mode_enable) && rgb_required != 1) { // only check once in a while, less flickering for unhandled cases
         return;
     }
 
-    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || !is_side_rgb_off() || rgb_required) { 
+    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || !is_side_rgb_off() || rgb_required > 0) { 
         rgb_required = 0;
         led_debounce = 4;
         pwr_led_on();

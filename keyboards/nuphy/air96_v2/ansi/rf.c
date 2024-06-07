@@ -91,7 +91,7 @@ void uart_send_repeat_from_queue(void) {
     static uint32_t        dequeue_timer = 0;
     static report_buffer_t report_buff   = {0};
 
-    if (timer_elapsed32(dequeue_timer) > 10 && !rf_queue.is_empty()) { //50
+    if (timer_elapsed32(dequeue_timer) > 5 && !rf_queue.is_empty()) { //50
         rf_queue.dequeue(&report_buff);
         dequeue_timer = timer_read32();
     }
@@ -103,6 +103,7 @@ void uart_send_repeat_from_queue(void) {
     }
 
     if (report_buff.repeat < 24) {
+        wait_us(1);
         uart_send_report(report_buff.cmd, report_buff.buffer, report_buff.length);
         report_buff.repeat++;
     }

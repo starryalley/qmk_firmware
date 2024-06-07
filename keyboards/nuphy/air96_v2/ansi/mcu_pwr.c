@@ -25,7 +25,7 @@ static bool f_usb_deinit  = 0;
 static bool rgb_led_on    = 0;
 
 // void clear_report_buffer_and_queue(void);
-// void clear_report_buffer(void);
+void clear_report_buffer(void);
 
 #if (MCU_SLEEP_ENABLE)
 
@@ -205,6 +205,13 @@ void exit_light_sleep(bool stm32_init) {
 
 }
 
+void matrix_scan_repeat(uint8_t repeat) {
+    do {
+        matrix_scan();
+        __asm__ __volatile__("nop;nop;nop;\n\t" ::: "memory"); //nop nop 
+    } while (repeat--);
+}
+
 /**
  * @brief Wake up from deep sleep
  * @note This is triggered by an interrupt event.
@@ -218,7 +225,7 @@ void exit_deep_sleep(void) {
     extern void matrix_init_custom(void);
     matrix_init_custom();
 
-    matrix_scan();
+    matrix_scan_repeat(2);
 
     // m_uart_gpio_set_low_speed();
 
@@ -234,10 +241,10 @@ void exit_deep_sleep(void) {
     gpio_write_pin_high(NRF_WAKEUP_PIN);
 
     // Flag for RF state.
-    break_all_key();
+    clear_report_buffer();
     dev_info.rf_state = RF_LINKING;
     // dev_info.rf_state = RF_DISCONNECT;
-    rf_disconnect_delay = 10;
+    rf_disconnect_delay = 0xff;
     rf_linking_time     = 0;
 
     // wait_us(1);

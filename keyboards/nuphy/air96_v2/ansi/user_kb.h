@@ -200,7 +200,7 @@ extern bool               f_goto_deepsleep;
 extern uint32_t           eeprom_update_timer;
 extern bool               rgb_update;
 extern bool               user_update;
-extern bool               rgb_required;
+extern uint8_t            rgb_required;
 
 extern bool               is_side_rgb_off(void);
 

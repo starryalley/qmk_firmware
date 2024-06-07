@@ -237,13 +237,13 @@ void sys_sw_led_show(void) {
             current_rgb.g = 0x00;
             current_rgb.b = SIDE_BLINK_LIGHT;
         }
+	if (timer_elapsed32(sys_show_timer) >= 2900) {
+            sys_show_timer = 0;
+        }
         if ((timer_elapsed32(sys_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
             set_side_rgb(RIGHT_SIDE, RGB_OFF);
-        }
-        if (timer_elapsed32(sys_show_timer) >= 2900) {
-            sys_show_timer = 0;
         }
     }
 }
@@ -266,14 +266,13 @@ void sleep_sw_led_show(void) {
                 current_rgb.g = SIDE_BLINK_LIGHT;
                 break;
         }
-
+        if (timer_elapsed32(sleep_show_timer) >= 2900) {
+            sleep_show_timer = 0;
+        }
         if ((timer_elapsed32(sleep_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
             set_side_rgb(RIGHT_SIDE, RGB_OFF);
-        }
-        if (timer_elapsed32(sleep_show_timer) >= 2900) {
-            sleep_show_timer = 0;
         }
     }
 }
@@ -714,7 +713,7 @@ void rgb_led_indicator(void) {
             current_rgb.g = 0xFF;
         }
 
-        rgb_required = 1;
+        rgb_required = 2;
         for (uint8_t i = rgb_start_led; i <= rgb_end_led; i++) {
             rgb_matrix_set_color(i, current_rgb.r, current_rgb.g, current_rgb.b);
         }
@@ -727,7 +726,7 @@ void rgb_led_indicator(void) {
 void caps_word_show(void) {
     if (game_mode_enable || !user_config.caps_word_enable) { return; }
     if (is_caps_word_on()) {
-        rgb_required = 1;
+        rgb_required = 2;
         rgb_matrix_set_color(CAPS_LED, RGB_CYAN);
     }
 }
@@ -735,7 +734,7 @@ void caps_word_show(void) {
 void numlock_rgb_show(void) {
     if (user_config.numlock_state != 2) { return; }
     if (host_keyboard_led_state().num_lock) {
-        rgb_required = 1;
+        rgb_required = 2;
         rgb_matrix_set_color(NUMLOCK_LED, RGB_WHITE);
     }
 }
