@@ -428,7 +428,7 @@ void dev_sts_sync(void) {
         if (dev_info.rf_state != RF_CONNECT) {
             if (rf_disconnect_delay >= 15) {
                 rf_blink_cnt      = 3;
-                rf_link_show_time = 0;
+                if (rf_link_show_time == RF_LINK_SHOW_TIME) { rf_link_show_time = 0; }
                 link_state_temp   = dev_info.rf_state;
             } else {
                 rf_disconnect_delay++;
@@ -440,7 +440,7 @@ void dev_sts_sync(void) {
 
             if (link_state_temp != RF_CONNECT) {
                 link_state_temp   = RF_CONNECT;
-                rf_link_show_time = 0;
+                if (rf_link_show_time == RF_LINK_SHOW_TIME) { rf_link_show_time = 0; }
             }
         }
     }

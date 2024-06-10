@@ -109,13 +109,13 @@ typedef enum {
 #define NO_ACT_TIME_MINUTE        (60 * 100)
 
 #define RGB_MATRIX_GAME_MODE      RGB_MATRIX_GRADIENT_LEFT_RIGHT
-#define RGB_MATRIX_GAME_MODE_VAL  RGB_MATRIX_MAXIMUM_BRIGHTNESS - RGB_MATRIX_VAL_STEP * 2
 #define SIDE_MATRIX_GAME_MODE     4
 
 #define    CAPS_LED               55
 #define    LSHIFT_LED             71
 #define    WIN_LED                89
 #define    NUMLOCK_LED            33
+#define    G_LED                  60
 
 #define USB_ACTIVE                ((dev_info.link_mode == LINK_USB && USB_DRIVER.state != USB_SUSPENDED) || (dev_info.link_mode != LINK_USB && dev_info.rf_charge == 0x03))
 

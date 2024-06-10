@@ -406,18 +406,17 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
-        pwr_rgb_led_on();
         rgb_matrix_mode_noeeprom(RGB_MATRIX_GAME_MODE);
-        rgb_matrix_config.hsv.v = RGB_MATRIX_GAME_MODE_VAL;
         user_config.ee_side_mode   = 2;
         user_config.ee_side_rgb    = 0;
-        user_config.ee_side_light  = 2;
         user_config.ee_side_colour = SIDE_MATRIX_GAME_MODE;
         if (user_config.numlock_state != 0) { user_config.numlock_state = 1; }
     } else {
         rgb_matrix_reload_from_eeprom();
         eeconfig_read_kb_datablock(&user_config);
     }
+    pwr_rgb_led_on();
+    signal_rgb_led(game_mode_enable, G_LED, G_LED, 2000);
 }
 
 #ifndef NO_DEBUG

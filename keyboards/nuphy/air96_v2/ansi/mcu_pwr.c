@@ -245,7 +245,8 @@ void exit_deep_sleep(void) {
     dev_info.rf_state = RF_LINKING;
     // dev_info.rf_state = RF_DISCONNECT;
     rf_disconnect_delay = 0xff;
-    rf_linking_time     = 0;
+    rf_link_show_time   = 250;
+    // rf_linking_time     = 0;
 
     // wait_us(1);
 
