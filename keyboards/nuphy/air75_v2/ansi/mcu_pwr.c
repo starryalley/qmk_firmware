@@ -25,7 +25,7 @@ static bool f_usb_deinit = 0;
 static bool rgb_led_on   = 0;
 static bool side_led_on  = 0;
 
-// void clear_report_buffer_and_queue(void);
+void clear_report_buffer_and_queue(void);
 void clear_report_buffer(void);
 
 #if (MCU_SLEEP_ENABLE)
@@ -92,8 +92,8 @@ void enter_light_sleep(void) {
     }
 
     led_pwr_sleep_handle();
-    break_all_key();
-    // clear_report_buffer_and_queue();
+    // break_all_key();
+    clear_report_buffer_and_queue();
 }
 
 /**
@@ -175,6 +175,12 @@ void enter_deep_sleep(void) {
  * @note This is Nuphy's "open sourced" wake logic with some modifications. It's not deep sleep.
  */
 void exit_light_sleep(bool stm32_init) {
+
+    // Resume normal operations
+    no_act_time = 0;
+    f_rf_sleep = 0;
+    f_wakeup_prepare = 0;
+
     // Power on LEDs
     led_pwr_wake_handle();
 #if (MCU_SLEEP_ENABLE)
@@ -230,14 +236,9 @@ void exit_deep_sleep(void) {
     // dev_info.rf_state = RF_DISCONNECT;
     rf_disconnect_delay = 0xff;
     rf_link_show_time   = 250;
-    // rf_linking_time     = 0;
+    rf_linking_time     = 0;
 
     // wait_us(1);
-
-    // Resume normal operations
-    no_act_time = 0;
-    f_rf_sleep = 0;
-    f_wakeup_prepare = 0;
 
     exit_light_sleep(true);
 }

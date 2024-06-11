@@ -28,7 +28,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     // wake up immediately
     if (f_wakeup_prepare) {
         exit_light_sleep(false);
-        f_wakeup_prepare = 0;
+        // f_wakeup_prepare = 0;
     }
 
     if (!pre_process_record_user(keycode, record)) {
