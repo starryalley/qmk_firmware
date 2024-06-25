@@ -476,7 +476,8 @@ void uart_send_bytes(uint8_t *Buffer, uint32_t Length) {
     wait_us(50 + Length * 30);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
 
-    wait_us(800 - Length * 30);
+    // wait_us(800 - Length * 30);
+    wait_us(400);
 }
 
 /**
