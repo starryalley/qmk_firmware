@@ -407,6 +407,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             return false;
 
         case SLEEP_NOW:
+            if (USB_ACTIVE) { return false; }
             if (record->event.pressed) {
                 wait_ms(100);
             } else {
