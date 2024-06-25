@@ -479,7 +479,7 @@ void led_power_handle(void) {
         return;
     }
 
-    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || !is_side_rgb_off() || rgb_required > 0) { 
+    if (rgb_matrix_is_enabled() && (rgb_matrix_get_val() != 0 || !is_side_rgb_off() || rgb_required > 0)) { 
         rgb_required = 0;
         led_debounce = 4;
         pwr_led_on();

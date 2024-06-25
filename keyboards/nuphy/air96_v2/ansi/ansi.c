@@ -71,14 +71,20 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case RGB_VAI:
         case RGB_VAD:
+        case RGB_SAI:
+        case RGB_SAD:
+        case RGB_TOG:
             if (game_mode_enable) { break; }
             call_update_eeprom_data(&rgb_update);
             break;
 
         case RGB_MOD:
+        case RGB_RMOD:
         case RGB_HUI:
+        case RGB_HUD:
         case RGB_SPI:
         case RGB_SPD:
+        case RGB_M_P:
             if (game_mode_enable) { return false; }
             call_update_eeprom_data(&rgb_update);
             break;
@@ -285,9 +291,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
+        case RGB_RMOD:
+            if (record->event.pressed) {
+                rgb_matrix_step_reverse_noeeprom();
+            }
+            return false;
+
         case RGB_HUI:
             if (record->event.pressed) {
                 rgb_matrix_increase_hue_noeeprom();
+            }
+            return false;
+
+        case RGB_HUD:
+            if (record->event.pressed) {
+                rgb_matrix_decrease_hue_noeeprom();
             }
             return false;
 
@@ -300,6 +318,30 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case RGB_SPD:
             if (record->event.pressed) {
                 rgb_matrix_decrease_speed_noeeprom();
+            }
+            return false;
+
+        case RGB_SAI:
+            if (record->event.pressed) {
+                rgb_matrix_increase_sat_noeeprom();
+            }
+            return false;
+
+       case RGB_SAD:
+            if (record->event.pressed) {
+                rgb_matrix_decrease_sat_noeeprom();
+            }
+            return false;
+
+       case RGB_M_P:
+            if (record->event.pressed) {
+                rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+            }
+            return false;
+
+       case RGB_TOG:
+            if (record->event.pressed) {
+                rgb_matrix_toggle_noeeprom();
             }
             return false;
 

@@ -482,7 +482,7 @@ void led_power_handle(void) {
         return;
     }
 
-    if ((rgb_matrix_is_enabled() && rgb_matrix_get_val() != 0) || rgb_required > 0) {
+    if (rgb_matrix_is_enabled() && (rgb_matrix_get_val() != 0 || rgb_required > 0)) {
         pwr_rgb_led_on();
         rgb_required = 0;
     } else if (timer_elapsed32(interval) > 500) { // brightness is 0 or RGB off.
