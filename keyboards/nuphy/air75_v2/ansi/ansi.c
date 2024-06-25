@@ -80,6 +80,9 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case RGB_VAI:
         case RGB_VAD:
+        case RGB_SAI:
+        case RGB_SAD:
+        case RGB_TOG:
             if (game_mode_enable) { break; }
             call_update_eeprom_data(&rgb_update);
             break;
@@ -90,10 +93,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case RGB_HUD:
         case RGB_SPI:
         case RGB_SPD:
-        case RGB_SAI:
-        case RGB_SAD:
         case RGB_M_P:
-        case RGB_TOG:
             if (game_mode_enable) { return false; }
             call_update_eeprom_data(&rgb_update);
             break;
