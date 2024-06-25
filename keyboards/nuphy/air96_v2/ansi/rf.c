@@ -214,7 +214,7 @@ void rf_protocol_receive(void) {
                         bat_per_debounce = 0;
                     }
                     bat_per_debounce++;
-                    if (dev_info.rf_charge & 0x01) { dev_info.rf_battery = 100; }
+                    // if (dev_info.rf_charge & 0x01) { dev_info.rf_battery = 100; }
                 } else {
                     if (dev_info.rf_state != RF_INVAILD) {
                         if (error_cnt >= 5) {
