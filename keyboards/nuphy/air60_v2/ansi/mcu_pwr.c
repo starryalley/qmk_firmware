@@ -231,7 +231,7 @@ void exit_deep_sleep(void) {
     extern void matrix_init_custom(void);
     matrix_init_custom();
 
-    matrix_scan_repeat(2);
+    matrix_scan_repeat(1);
 
     // m_uart_gpio_set_low_speed();
 

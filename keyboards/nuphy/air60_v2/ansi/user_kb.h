@@ -86,10 +86,10 @@ typedef enum {
 #define LINK_BT_3                 3
 #define LINK_USB                  4
 
-#define LED_RF_24                18
-#define LED_BT_1                 15
-#define LED_BT_2                 16
-#define LED_BT_3                 17
+#define LED_RF_24                 18
+#define LED_BT_1                  15
+#define LED_BT_2                  16
+#define LED_BT_3                  17
 
 #define UART_HEAD                 0x5A
 #define FUNC_VALID_LEN            32
