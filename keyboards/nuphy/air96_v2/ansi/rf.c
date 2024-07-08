@@ -272,20 +272,6 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
     Usart_Mgr.TXDBuf[2] = 0x00;
 
     switch (cmd) {
-        case CMD_POWER_UP: {
-            Usart_Mgr.TXDBuf[3] = 1;
-            Usart_Mgr.TXDBuf[4] = 0;
-            Usart_Mgr.TXDBuf[5] = 0;
-            break;
-        }
-
-        case CMD_SNIF: {
-            Usart_Mgr.TXDBuf[3] = 1;
-            Usart_Mgr.TXDBuf[4] = 0;
-            Usart_Mgr.TXDBuf[5] = 0;
-            break;
-        }
-
         case CMD_SLEEP: {
             Usart_Mgr.TXDBuf[3] = 1;
             Usart_Mgr.TXDBuf[4] = 0;
@@ -368,58 +354,11 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
             break;
         }
 
-        case CMD_SET_24G_NAME: {
-            Usart_Mgr.TXDBuf[3]  = 42;
-            Usart_Mgr.TXDBuf[4]  = 42;
-            Usart_Mgr.TXDBuf[5]  = 3;
-            Usart_Mgr.TXDBuf[6]  = 'N';
-            Usart_Mgr.TXDBuf[8]  = 'u';
-            Usart_Mgr.TXDBuf[10] = 'P';
-            Usart_Mgr.TXDBuf[12] = 'h';
-            Usart_Mgr.TXDBuf[14] = 'y';
-            Usart_Mgr.TXDBuf[16] = ' ';
-            Usart_Mgr.TXDBuf[18] = 'A';
-            Usart_Mgr.TXDBuf[20] = 'i';
-            Usart_Mgr.TXDBuf[22] = 'r';
-            Usart_Mgr.TXDBuf[24] = '9';
-            Usart_Mgr.TXDBuf[26] = '6';
-            Usart_Mgr.TXDBuf[28] = 'v';
-            Usart_Mgr.TXDBuf[30] = '2';
-            Usart_Mgr.TXDBuf[32] = ' ';
-            Usart_Mgr.TXDBuf[34] = 'D';
-            Usart_Mgr.TXDBuf[36] = 'o';
-            Usart_Mgr.TXDBuf[38] = 'n';
-            Usart_Mgr.TXDBuf[40] = 'g';
-            Usart_Mgr.TXDBuf[42] = 'l';
-            Usart_Mgr.TXDBuf[44] = 'e';
-            Usart_Mgr.TXDBuf[46] = get_checksum(Usart_Mgr.TXDBuf + 4, Usart_Mgr.TXDBuf[3]); // sum
-            break;
-        }
-
         case CMD_READ_DATA: {
             Usart_Mgr.TXDBuf[3] = 2;
             Usart_Mgr.TXDBuf[4] = 0x00;
             Usart_Mgr.TXDBuf[5] = FUNC_VALID_LEN;
             Usart_Mgr.TXDBuf[6] = FUNC_VALID_LEN;
-            break;
-        }
-
-        case CMD_WRITE_DATA: {
-            uint8_t i;
-            func_tab[4] = dev_info.link_mode;
-            func_tab[5] = dev_info.rf_channel;
-            func_tab[6] = dev_info.ble_channel;
-
-            Usart_Mgr.TXDBuf[3] = FUNC_VALID_LEN + 2;
-            Usart_Mgr.TXDBuf[4] = 0;
-            Usart_Mgr.TXDBuf[5] = FUNC_VALID_LEN;
-
-            for (i = 0; i < FUNC_VALID_LEN; i++) {
-                Usart_Mgr.TXDBuf[6 + i] = func_tab[i];
-            }
-            Usart_Mgr.TXDBuf[6 + i] = get_checksum(func_tab, FUNC_VALID_LEN);
-            Usart_Mgr.TXDBuf[6 + i] += 0;
-            Usart_Mgr.TXDBuf[6 + i] += FUNC_VALID_LEN;
             break;
         }
 
@@ -677,5 +616,4 @@ void rf_device_init(void) {
     }
 
     uart_send_cmd(CMD_SET_NAME, 10, 20);
-    uart_send_cmd(CMD_SET_24G_NAME, 10, 20);
 }

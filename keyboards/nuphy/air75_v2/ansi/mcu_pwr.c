@@ -92,8 +92,8 @@ void enter_light_sleep(void) {
     }
 
     led_pwr_sleep_handle();
-    // break_all_key();
-    clear_report_buffer_and_queue();
+    break_all_key();
+    // clear_report_buffer_and_queue();
 }
 
 /**
