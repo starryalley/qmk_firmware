@@ -352,9 +352,9 @@ void timer_pro(void) {
 
     if (rf_link_show_time < RF_LINK_SHOW_TIME) { rf_link_show_time++; }
 
-    if (no_act_time < 0xffffffff) { no_act_time++; }
+    if (no_act_time < UINT32_MAX) { no_act_time++; }
 
-    if (rf_linking_time < 0xffff) { rf_linking_time++; }
+    if (rf_linking_time < UINT16_MAX) { rf_linking_time++; }
 
 }
 
