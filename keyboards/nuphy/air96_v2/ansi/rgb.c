@@ -696,7 +696,7 @@ void rgb_test_show(void) {
 void signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time) {
     rgb_state           = state > 0 ? 1 : 0;
     rgb_start_led       = start_led;
-    rgb_end_led         = end_led;
+    rgb_end_led         = end_led == UINT8_MAX ? start_led : end_led;
     rgb_show_time       = show_time;
     rgb_indicator_timer = 0;
 }
@@ -704,7 +704,7 @@ void signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t 
 void rgb_led_indicator(void) {
     if (rgb_show_time == 0) { return; }
     if (rgb_indicator_timer == 0) { rgb_indicator_timer = timer_read32(); }
-    if (timer_elapsed32(rgb_indicator_timer) < rgb_show_time) {
+    if (timer_elapsed32(rgb_indicator_timer) < rgb_show_time || rgb_show_time == UINT16_MAX) {
         current_rgb.r = 0xFF;
         current_rgb.g = 0x00;
         current_rgb.b = 0x00;
