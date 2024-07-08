@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	_______, 	_______,  	_______,  	_______, 	_______,  	_______,  	   _______,  	_______,  	_______,  	_______, 	_______, 	_______, 	SLEEP_NOW, 	_______,
 	CAPS_WORD, 	_______,   	_______,   	_______,  	GAME_MODE,  _______,   	   _______,   	_______,   	_______,   	_______,  	_______,   	_______,	            _______,
 	_______,    _______,   	_______,   	_______,  	_______,   	NUMLOCK_IND,   _______,   	_______,   	SIDE_SPD,	SIDE_SPI,  	_______,	_______,  	SIDE_VAI,    _______,
-	_______,	WIN_LOCK,	_______,										_______, 							_______,	_______,   	SIDE_MOD,	SIDE_VAD,    SIDE_HUI)
+	_______,	_______,	_______,										_______, 							_______,	_______,   	SIDE_MOD,	SIDE_VAD,    SIDE_HUI)
 };
 
 const is31fl3733_led_t PROGMEM g_is31fl3733_leds[RGB_MATRIX_LED_COUNT] = {

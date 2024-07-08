@@ -136,13 +136,16 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             f_caps_word_tg = record->event.pressed;
             return false;
 
+        case KC_LGUI:
         case WIN_LOCK:
             if (record->event.pressed) {
-                keymap_config.no_gui = !keymap_config.no_gui;
-                signal_rgb_led(!keymap_config.no_gui, WIN_LED, WIN_LED, 3000);
-                // eeconfig_update_keymap(keymap_config.raw);
+                if (get_highest_layer(layer_state) == M_LAYER || keycode == WIN_LOCK) {
+                    keymap_config.no_gui = !keymap_config.no_gui;
+                    signal_rgb_led(!keymap_config.no_gui, WIN_LED, WIN_LED, 3000);
+                    return false;
+                }
             }
-            return false;
+            return true;
 
         case KC_LSFT:
             if (!record->event.pressed) {
