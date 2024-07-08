@@ -739,6 +739,18 @@ void numlock_rgb_show(void) {
     }
 }
 
+void rgb_matrix_step_game_mode(uint8_t step) {
+    if (step) {
+        user_config.game_rgb_mod++;
+        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 1; }
+    } else {
+        if (user_config.game_rgb_mod > 1) { user_config.game_rgb_mod--; }
+        else { user_config.game_rgb_mod = 3; }
+    }
+
+    rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
+}
+
 /**
  * @brief  side_led_show.
  */

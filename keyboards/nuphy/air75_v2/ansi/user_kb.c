@@ -21,46 +21,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "color.h"
 
 user_config_t   user_config;
+user_config_t   read_user_config;
 DEV_INFO_STRUCT dev_info = {
     .rf_battery = 100,
     .link_mode  = LINK_USB,
     .rf_state   = RF_IDLE,
 };
-bool f_bat_hold         = 0;
-bool game_mode_enable   = 0;
-bool f_send_channel     = 0;
-bool f_dial_sw_init_ok  = 0;
-bool f_rf_sw_press      = 0;
-bool f_dev_reset_press  = 0;
-bool f_rgb_test_press   = 0;
-bool f_bat_num_show     = 0;
-bool f_caps_word_tg     = 0;
-bool f_numlock_press    = 0;
+bool f_bat_hold          = 0;
+bool game_mode_enable    = 0;
+bool f_send_channel      = 0;
+bool f_dial_sw_init_ok   = 0;
+bool f_rf_sw_press       = 0;
+bool f_dev_reset_press   = 0;
+bool f_rgb_test_press    = 0;
+bool f_bat_num_show      = 0;
+bool f_caps_word_tg      = 0;
+bool f_numlock_press     = 0;
+bool f_gmode_reset_press = 0;
 
-uint8_t        rgb_required          = 0;
-uint8_t        rf_blink_cnt          = 0;
-uint8_t        rf_sw_temp            = 0;
-uint8_t        host_mode             = 0;
-uint16_t       rf_linking_time       = 0;
-uint16_t       rf_link_show_time     = 0;
-uint32_t       no_act_time           = 0;
-uint16_t       dev_reset_press_delay = 0;
-uint16_t       rf_sw_press_delay     = 0;
-uint16_t       rgb_test_press_delay  = 0;
-uint16_t       caps_word_tg_delay    = 0;
-uint16_t       numlock_press_delay   = 0;
-uint32_t       sys_show_timer        = 0;
-uint32_t       sleep_show_timer      = 0;
+uint8_t        rgb_required            = 0;
+uint8_t        rf_blink_cnt            = 0;
+uint8_t        rf_sw_temp              = 0;
+uint8_t        host_mode               = 0;
+uint16_t       rf_linking_time         = 0;
+uint16_t       rf_link_show_time       = 0;
+uint32_t       no_act_time             = 0;
+uint16_t       dev_reset_press_delay   = 0;
+uint16_t       rf_sw_press_delay       = 0;
+uint16_t       rgb_test_press_delay    = 0;
+uint16_t       caps_word_tg_delay      = 0;
+uint16_t       numlock_press_delay     = 0;
+uint16_t       gmode_reset_press_delay = 0;
+uint32_t       sys_show_timer          = 0;
+uint32_t       sleep_show_timer        = 0;
 
-host_driver_t *m_host_driver         = 0;
+host_driver_t *m_host_driver           = 0;
 
-uint16_t       link_timeout          = NO_ACT_TIME_MINUTE;
-uint16_t       sleep_time_delay      = NO_ACT_TIME_MINUTE * 2;
-uint32_t       deep_sleep_delay      = NO_ACT_TIME_MINUTE * 6;
+uint16_t       link_timeout            = NO_ACT_TIME_MINUTE;
+uint16_t       sleep_time_delay        = NO_ACT_TIME_MINUTE * 2;
+uint32_t       deep_sleep_delay        = NO_ACT_TIME_MINUTE * 6;
 
-uint32_t       eeprom_update_timer   = 0;
-bool           user_update           = 0;
-bool           rgb_update            = 0;
+uint32_t       eeprom_update_timer     = 0;
+bool           user_update             = 0;
+bool           rgb_update              = 0;
 
 extern host_driver_t      rf_host_driver;
 
@@ -181,6 +184,18 @@ void custom_key_press(void) {
         }
     } else {
         numlock_press_delay = 0;
+    }
+
+    // Trigger Game Mode Reset
+    if (f_gmode_reset_press) {
+        gmode_reset_press_delay++;
+        if (gmode_reset_press_delay >= MEDIUM_PRESS_DELAY) {
+            game_config_reset(1);
+            game_mode_tweak();
+            f_gmode_reset_press = 0;
+        }
+    }  else {
+        gmode_reset_press_delay = 0;
     }
 
     // Toggle Caps Word
@@ -406,10 +421,14 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_GAME_MODE);
+        rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
+        rgb_matrix_config.hsv.v    = user_config.game_rgb_val;
+        rgb_matrix_config.hsv.h    = user_config.game_rgb_hue;
+        rgb_matrix_config.hsv.s    = user_config.game_rgb_sat;
         user_config.ee_side_mode   = 2;
         user_config.ee_side_rgb    = 0;
-        user_config.ee_side_colour = SIDE_MATRIX_GAME_MODE;
+        user_config.ee_side_colour = user_config.game_side_colour;
+        user_config.ee_side_light  = user_config.game_side_light;
         if (user_config.numlock_state != 0) { user_config.numlock_state = 1; }
     } else {
         rgb_matrix_reload_from_eeprom();
@@ -450,8 +469,20 @@ void user_config_reset(void) {
     user_config.sleep_mode              = 1;
     user_config.caps_word_enable        = 1;
     user_config.numlock_state           = 1;
+    game_config_reset(0);
     keymap_config.no_gui                = 0;
     eeconfig_update_kb_datablock(&user_config);
+}
+
+void game_config_reset(uint8_t save_to_eeprom) {
+    if (save_to_eeprom) { eeconfig_read_kb_datablock(&user_config); }
+    user_config.game_side_colour       = SIDE_MATRIX_GAME_MODE;
+    user_config.game_side_light        = 2;
+    user_config.game_rgb_mod           = RGB_MATRIX_GAME_MODE;
+    user_config.game_rgb_val           = RGB_MATRIX_DEFAULT_VAL;
+    user_config.game_rgb_hue           = RGB_MATRIX_DEFAULT_HUE;
+    user_config.game_rgb_sat           = RGB_MATRIX_DEFAULT_SAT;
+    if (save_to_eeprom) { eeconfig_update_kb_datablock(&user_config); }
 }
 
 void matrix_io_delay(void) {

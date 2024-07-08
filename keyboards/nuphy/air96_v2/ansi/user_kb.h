@@ -156,6 +156,12 @@ typedef struct
     uint8_t sleep_mode;
     uint8_t caps_word_enable;
     uint8_t numlock_state;
+    uint8_t game_side_colour;
+    uint8_t game_side_light;
+    uint8_t game_rgb_mod;
+    uint8_t game_rgb_val;
+    uint8_t game_rgb_hue;
+    uint8_t game_rgb_sat;
     uint8_t retain1;
     uint8_t retain2;
 } user_config_t;
@@ -179,6 +185,7 @@ extern bool               f_bat_num_show;
 extern bool               f_rgb_test_press;
 extern bool               f_caps_word_tg;
 extern bool               f_numlock_press;
+extern bool               f_gmode_reset_press;
 
 extern uint8_t            rf_sw_temp;
 extern uint16_t           rf_sw_press_delay;
@@ -235,4 +242,6 @@ void    game_mode_tweak(void);
 void    user_debug(void);
 void    call_update_eeprom_data(bool* eeprom_update_init);
 void    signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time);
+void    game_config_reset(uint8_t save_to_eeprom);
+void    rgb_matrix_step_game_mode(uint8_t step);
 uint8_t uart_send_cmd(uint8_t cmd, uint8_t ack_cnt, uint8_t delayms);

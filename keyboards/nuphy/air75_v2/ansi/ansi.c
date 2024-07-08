@@ -58,6 +58,9 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case SIDE_VAI:
         case SIDE_VAD:
         case SIDE_HUI:
+            call_update_eeprom_data(&user_update);
+            break;
+
         case NUMLOCK_IND:
             if (game_mode_enable) { break; }
             call_update_eeprom_data(&user_update);
@@ -78,19 +81,26 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             if (game_mode_enable) { return false; }
             break;
 
-        case RGB_VAI:
-        case RGB_VAD:
-        case RGB_SAI:
-        case RGB_SAD:
         case RGB_TOG:
             if (game_mode_enable) { break; }
             call_update_eeprom_data(&rgb_update);
             break;
 
-        case RGB_MOD:
-        case RGB_RMOD:
+        case RGB_VAI:
+        case RGB_VAD:
+        case RGB_SAI:
+        case RGB_SAD:
         case RGB_HUI:
         case RGB_HUD:
+        case RGB_MOD:
+        case RGB_RMOD:
+            if (game_mode_enable) {
+                call_update_eeprom_data(&user_update);
+                break;
+            }
+            call_update_eeprom_data(&rgb_update);
+            break;
+
         case RGB_SPI:
         case RGB_SPD:
         case RGB_M_P:
@@ -308,12 +318,20 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case RGB_MOD:
             if (record->event.pressed) {
+                if (game_mode_enable) {
+                    rgb_matrix_step_game_mode(1);
+                    return false;
+                }
                 rgb_matrix_step_noeeprom();
             }
             return false;
 
         case RGB_RMOD:
             if (record->event.pressed) {
+                if (game_mode_enable) {
+                    rgb_matrix_step_game_mode(0);
+                    return false;
+                }
                 rgb_matrix_step_reverse_noeeprom();
             }
             return false;
