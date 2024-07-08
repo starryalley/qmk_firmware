@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 #include "usb_main.h"
+#include "layer_names.h"
 
 typedef enum {
     RX_Idle,

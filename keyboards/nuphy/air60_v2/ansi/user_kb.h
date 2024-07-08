@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 #include "usb_main.h"
+#include "layer_names/h"
 
 typedef enum {
     RX_Idle,
@@ -116,8 +117,8 @@ typedef enum {
 #define RGB_MATRIX_GAME_MODE      RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define SIDE_MATRIX_GAME_MODE     4
 
-#define    MAC_BASE_LAYER_NUM     0
-#define    WIN_BASE_LAYER_NUM     3
+// #define    MAC_BASE_LAYER_NUM     0
+// #define    WIN_BASE_LAYER_NUM     3
 
 #define    CAPS_LED               28
 #define    LSHIFT_LED             41

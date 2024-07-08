@@ -16,15 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
-
-enum layers{
-    MAC_BASE,
-    MAC_FN,
-    WIN_BASE,
-    WIN_FN,
-    M_LAYER
-};
-
+#include "layer_names.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -67,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    _______,   _______,   _______,   _______,     _______,      _______,   _______,   _______,     _______,   SIDE_1,     _______,    _______,   SLEEP_NOW,  _______,                _______,   _______,   _______,   _______,
    CAPS_WORD, _______,   _______,   _______,     _______,      GAME_MODE, _______,   _______,     _______,   _______,    _______,    _______,   _______,                            _______,   _______,   _______,
    _______,              _______,   _______,     _______,      _______,   _______,   NUMLOCK_IND, _______,   SIDE_SPD,   SIDE_SPI,   _______,   _______,               SIDE_VAI,    _______,   _______,   _______,   _______,
-   _______,   WIN_LOCK,  _______,                              _______,                                                  _______,    MO(4),     _______,    SIDE_MOD,  SIDE_VAD,    SIDE_HUI,  _______,   _______)
+   _______,   _______,   _______,                              _______,                                                  _______,    MO(4),     _______,    SIDE_MOD,  SIDE_VAD,    SIDE_HUI,  _______,   _______)
 };
 
 

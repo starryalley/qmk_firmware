@@ -16,17 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
-
-enum layers{
-    MAC_BASE,
-    MAC_FN,
-    MAC_FN_SFT,
-    WIN_BASE,
-    WIN_FN,
-    WIN_FN_SFT,
-    M_LAYER
-};
-
+#include "layer_names.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
