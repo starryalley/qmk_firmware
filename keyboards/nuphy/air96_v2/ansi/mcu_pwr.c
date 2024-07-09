@@ -27,8 +27,6 @@ static bool rgb_led_on    = 0;
 void clear_report_buffer_and_queue(void);
 void clear_report_buffer(void);
 
-#if (MCU_SLEEP_ENABLE)
-
 // Pin definitions
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
@@ -82,8 +80,6 @@ void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex
 #define EXTI_PortSourceGPIOC ((uint8_t)0x02)
 #define EXTI_PortSourceGPIOD ((uint8_t)0x03)
 
-#endif
-
 /**
  * @brief  Light sleep by powering off LEDs.
  * @note This is Nuphy's "open sourced" sleep logic. It's not deep sleep.
@@ -108,7 +104,6 @@ void enter_deep_sleep(void) {
     //------------------------ RF to sleep
     enter_light_sleep();
 
-#if (MCU_SLEEP_ENABLE)
     //------------------------ Turn off USB if not used
     if (dev_info.link_mode != LINK_USB) {
         f_usb_deinit = 1;
@@ -178,7 +173,6 @@ void enter_deep_sleep(void) {
 
     // Enter low power mode and wait for interrupt signal
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
-#endif
 }
 
 /**
@@ -195,10 +189,9 @@ void exit_light_sleep(bool stm32_init) {
     // Power on LEDs
     led_pwr_wake_handle();
 
-#if (MCU_SLEEP_ENABLE)
     // Reinitialize the system clock
     if (stm32_init) { stm32_clock_init(); }
-#endif
+
     // Handshake send to wake RF
     // uart_send_cmd(CMD_HAND, 0, 1);
     // uart_send_cmd(CMD_RF_STS_SYSC, 1, 1);
@@ -296,7 +289,6 @@ void pwr_led_on(void) {
 #endif
 }
 
-#if (MCU_SLEEP_ENABLE)
 /* Nuphy's implementations. */
 
 /**
@@ -384,7 +376,6 @@ void EXTI_StructInit(EXTI_InitTypeDef *EXTI_InitStruct) {
     EXTI_InitStruct->EXTI_LineCmd = DISABLE;
 }
 
-#endif
 
 #if (0)
 void mcu_timer6_init(void) {
