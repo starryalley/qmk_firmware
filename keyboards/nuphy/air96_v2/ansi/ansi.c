@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "user_kb.h"
 #include "ansi.h"
 #include "mcu_pwr.h"
+#include "version.h"
 
 /* qmk pre-process record */
 bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
@@ -438,6 +439,17 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             return true;
     }
     return true;
+}
+
+void post_process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case DB_TOGG:
+            dprintf("Keyboard: %s @ QMK: %s | BUILD: %s (%s)\n", QMK_KEYBOARD, QMK_VERSION, QMK_BUILDDATE, QMK_GIT_HASH);
+            break;
+
+        default:
+            break;
+    }
 }
 
 bool rgb_matrix_indicators_kb(void) {
