@@ -147,7 +147,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             f_caps_word_tg = record->event.pressed;
             return false;
 
-	case KC_LGUI:
+        case KC_LGUI:
         case WIN_LOCK:
             if (record->event.pressed) {
                 if (get_highest_layer(layer_state) == M_LAYER || keycode == WIN_LOCK) {

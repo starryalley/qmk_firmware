@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "color.h"
 
 user_config_t   user_config;
-user_config_t read_user_config;
+user_config_t   read_user_config;
 DEV_INFO_STRUCT dev_info = {
     .rf_battery = 100,
     .link_mode  = LINK_USB,
