@@ -519,7 +519,7 @@ void matrix_io_delay(void) {
 void led_power_handle(void) {
     static uint32_t interval    = 0;
     static uint8_t led_debounce = 4;
-    uint16_t led_interval = rgb_required == 1 ? 100 : 500
+    uint16_t led_interval = rgb_required == 1 ? 100 : 500;
 
     if (timer_elapsed32(interval) < led_interval || f_wakeup_prepare || game_mode_enable) { // only check once in a while, less flickering for unhandled cases
         return;
