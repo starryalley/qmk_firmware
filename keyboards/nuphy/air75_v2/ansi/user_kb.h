@@ -49,7 +49,7 @@ typedef enum {
 #define RF_DISCONNECT             4
 #define RF_SLEEP                  5
 #define RF_SNIF                   6
-#define RF_INVAILD                0XFE
+#define RF_INVALID                0XFE
 #define RF_ERR_STATE              0XFF
 
 #define CMD_POWER_UP              0XF0
@@ -114,7 +114,7 @@ typedef enum {
 
 #define    CAPS_LED               59
 #define    LSHIFT_LED             60
-#define    WIN_LED                82
+#define    WIN_LED                (dev_info.sys_sw_state == SYS_SW_WIN ? 82 : 81)
 #define    NUMLOCK_LED            14
 #define    G_LED                  54
 

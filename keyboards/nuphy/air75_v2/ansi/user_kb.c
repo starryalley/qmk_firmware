@@ -75,14 +75,14 @@ void gpio_init(void) {
     pwr_rgb_led_on();
     pwr_side_led_on();
     /* set side led pin output low */
-    gpio_set_pin_output(DRIVER_SIDE_PIN);
+    gpio_set_pin_output_push_pull(DRIVER_SIDE_PIN);
     gpio_write_pin_low(DRIVER_SIDE_PIN);
     /* config RF module pin */
-    gpio_set_pin_output(NRF_WAKEUP_PIN);
+    gpio_set_pin_output_push_pull(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
     gpio_set_pin_input_high(NRF_TEST_PIN);
     /* reset RF module */
-    gpio_set_pin_output(NRF_RESET_PIN);
+    gpio_set_pin_output_push_pull(NRF_RESET_PIN);
     gpio_write_pin_low(NRF_RESET_PIN);
     wait_ms(50);
     gpio_write_pin_high(NRF_RESET_PIN);
@@ -402,18 +402,31 @@ void delay_update_eeprom_data(void) {
     }
     if (timer_elapsed32(eeprom_update_timer) < (1000 * 30)) { return; }
     if (user_update) {
+        if (game_mode_enable) {
+            eeconfig_read_kb_datablock(&read_user_config);
+            read_user_config.game_rgb_val     = rgb_matrix_config.hsv.v;
+            read_user_config.game_rgb_hue     = rgb_matrix_config.hsv.h;
+            read_user_config.game_rgb_sat     = rgb_matrix_config.hsv.s;
+            read_user_config.game_rgb_mod     = rgb_matrix_config.mode;
+            read_user_config.game_side_colour = user_config.ee_side_colour;
+            read_user_config.game_side_light  = user_config.ee_side_light;
+
+            eeconfig_update_kb_datablock(&read_user_config);
+        } else {
+            eeconfig_update_kb_datablock(&user_config);
+        }
+
+        user_update         = 0;
 #ifndef NO_DEBUG
         dprint("Updating EEPROM: user_config\n");
 #endif
-        eeconfig_update_kb_datablock(&user_config);
-        user_update         = 0;
     }
     if (rgb_update) {
+        eeconfig_update_rgb_matrix();
+        rgb_update          = 0;
 #ifndef NO_DEBUG
         dprint("Updating EEPROM:  rgb_config\n");
 #endif
-        eeconfig_update_rgb_matrix();
-        rgb_update          = 0;
     }
     eeprom_update_timer = 0;
 }
@@ -421,6 +434,7 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
+        pwr_rgb_led_on();
         rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
         rgb_matrix_config.hsv.v    = user_config.game_rgb_val;
         rgb_matrix_config.hsv.h    = user_config.game_rgb_hue;
@@ -508,8 +522,9 @@ void matrix_io_delay(void) {
 void led_power_handle(void) {
     static uint32_t interval    = 0;
     static uint8_t led_debounce = 4;
+    uint16_t led_interval = rgb_required == 1 ? 100 : 500;
 
-    if ((timer_elapsed32(interval) < 500 || f_wakeup_prepare || game_mode_enable) && rgb_required != 1) { // only check once in a while, less flickering for unhandled cases
+    if (timer_elapsed32(interval) < led_interval || f_wakeup_prepare || game_mode_enable) { // only check once in a while, less flickering for unhandled cases
         return;
     }
 

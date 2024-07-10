@@ -1,19 +1,19 @@
-# NuPhy Air75 V2
+c# NuPhy Air96 V2
 
-*NuPhy Air75 V2 is a standard 84 key keyboard.*
-![NuPhy Air75 V2](https://i.imgur.com/R7jS2JC.jpeg)
+*NuPhy Air96 V2 is a standard 100 key keyboard.*
+![NuPhy Air96 V2](https://bit.ly/41B1Hsk)
 
 * Keyboard Maintainer: [nuphy](https://github.com/nuphy-src)
-* Hardware Supported: NuPhy Air75 V2 PCB
+* Hardware Supported: NuPhy Air96 V2 PCB
 * Hardware Availability: Private
 
 Make example for this keyboard (after setting up your build environment):
 
-    make nuphy/air75_v2/ansi:via
+    make nuphy/air96_v2/ansi:default
 
 Flashing example for this keyboard:
 
-    make nuphy/air75_v2/ansi:via:flash
+    make nuphy/air96_v2/ansi:default:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
@@ -25,6 +25,5 @@ Enter the bootloader:
 
 * **Hardware reset**: Remove the capslock keycap, hold the little button beneath and plug in the keyboard.
 
-## Customizations and Fixes
+@@include[customizations.md](customizations.md)
 
-* [customizations.md](customizations.md)

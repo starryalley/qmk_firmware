@@ -73,12 +73,12 @@ void gpio_init(void) {
     /* power on all LEDs */
     pwr_led_on();
     /* config RF module pin */
-    gpio_set_pin_output(NRF_WAKEUP_PIN);
+    gpio_set_pin_output_push_pull(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
     /* set RF module boot pin high */
     gpio_set_pin_input_high(NRF_BOOT_PIN);
     /* reset RF module */
-    gpio_set_pin_output(NRF_RESET_PIN);
+    gpio_set_pin_output_push_pull(NRF_RESET_PIN);
     gpio_write_pin_low(NRF_RESET_PIN);
     wait_ms(50);
     gpio_write_pin_high(NRF_RESET_PIN);
@@ -428,6 +428,7 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
+        pwr_led_on();
         rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
         rgb_matrix_config.hsv.v    = user_config.game_rgb_val;
         rgb_matrix_config.hsv.h    = user_config.game_rgb_hue;
@@ -518,8 +519,9 @@ void matrix_io_delay(void) {
 void led_power_handle(void) {
     static uint32_t interval    = 0;
     static uint8_t led_debounce = 4;
+    uint16_t led_interval = rgb_required == 1 ? 100 : 500;
 
-    if ((timer_elapsed32(interval) < 500 || f_wakeup_prepare || game_mode_enable) && rgb_required != 1) { // only check once in a while, less flickering for unhandled cases
+    if (timer_elapsed32(interval) < led_interval || f_wakeup_prepare || game_mode_enable) { // only check once in a while, less flickering for unhandled cases
         return;
     }
 

@@ -138,8 +138,13 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case GAME_MODE:
             if (record->event.pressed) {
-                game_mode_enable = !game_mode_enable;
-                game_mode_tweak();
+                f_gmode_reset_press = 1;
+            } else {
+                if (f_gmode_reset_press) {
+                    f_gmode_reset_press = 0;
+                    game_mode_enable = !game_mode_enable;
+                    game_mode_tweak();
+                }
             }
             return false;
 
@@ -511,9 +516,9 @@ void housekeeping_task_kb(void) {
     user_debug();
 #endif
 
-    if (game_mode_enable) { return; }
-
     delay_update_eeprom_data();
+
+    if (game_mode_enable) { return; }
 
     sleep_handle();
 

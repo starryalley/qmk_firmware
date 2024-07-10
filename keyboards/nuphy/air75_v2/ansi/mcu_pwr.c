@@ -109,7 +109,7 @@ void enter_deep_sleep(void) {
     }
 
     for (uint8_t i = 0; i < MATRIX_COLS; ++i) {
-        gpio_set_pin_output(col_pins[i]);
+        gpio_set_pin_output_push_pull(col_pins[i]);
         gpio_write_pin_high(col_pins[i]);
     }
     for (uint8_t i = 0; i < MATRIX_ROWS; ++i) {
@@ -142,22 +142,22 @@ void enter_deep_sleep(void) {
     NVIC_Init(&NVIC_InitStructure);
 
 
-    gpio_set_pin_output(DEV_MODE_PIN);
+    gpio_set_pin_output_push_pull(DEV_MODE_PIN);
     gpio_write_pin_low(DEV_MODE_PIN);
 
-    gpio_set_pin_output(SYS_MODE_PIN);
+    gpio_set_pin_output_push_pull(SYS_MODE_PIN);
     gpio_write_pin_low(SYS_MODE_PIN);
 
     // These should be LED pins as well, turning them off.
-    gpio_set_pin_output(A7);
+    gpio_set_pin_output_push_pull(A7);
     gpio_write_pin_low(A7);
-    gpio_set_pin_output(DRIVER_SIDE_PIN);
+    gpio_set_pin_output_push_pull(DRIVER_SIDE_PIN);
     gpio_write_pin_low(DRIVER_SIDE_PIN);
 
     /* skip RF sleep
     gpio_set_pin_input_high(NRF_TEST_PIN);
 
-    gpio_set_pin_output(NRF_WAKEUP_PIN);
+    gpio_set_pin_output_push_pull(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
     */
 
@@ -221,7 +221,7 @@ void exit_deep_sleep(void) {
     gpio_set_pin_input_high(SYS_MODE_PIN); // PC1
 
     /* Wake RF module */
-    gpio_set_pin_output(NRF_WAKEUP_PIN);
+    gpio_set_pin_output_push_pull(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
 
     // Flag for RF state.
@@ -250,7 +250,7 @@ void led_pwr_wake_handle(void) {
 void pwr_rgb_led_off(void) {
     if (!rgb_led_on) { return; }
     // LED power supply off
-    gpio_set_pin_output(DC_BOOST_PIN);
+    gpio_set_pin_output_push_pull(DC_BOOST_PIN);
     gpio_write_pin_low(DC_BOOST_PIN);
     gpio_set_pin_input(DRIVER_LED_CS_PIN);
     rgb_led_on = 0;
@@ -263,9 +263,9 @@ void pwr_rgb_led_off(void) {
 void pwr_rgb_led_on(void) {
     if (rgb_led_on) { return; }
     // LED power supply on
-    gpio_set_pin_output(DC_BOOST_PIN);
+    gpio_set_pin_output_push_pull(DC_BOOST_PIN);
     gpio_write_pin_high(DC_BOOST_PIN);
-    gpio_set_pin_output(DRIVER_LED_CS_PIN);
+    gpio_set_pin_output_push_pull(DRIVER_LED_CS_PIN);
     gpio_write_pin_low(DRIVER_LED_CS_PIN);
     rgb_matrix_set_color(RGB_MATRIX_LED_COUNT, 1, 1, 1);
     rgb_led_on = 1;
@@ -285,7 +285,7 @@ void pwr_side_led_off(void) {
 
 void pwr_side_led_on(void) {
     if (side_led_on) { return; }
-    gpio_set_pin_output(DRIVER_SIDE_CS_PIN);
+    gpio_set_pin_output_push_pull(DRIVER_SIDE_CS_PIN);
     gpio_write_pin_low(DRIVER_SIDE_CS_PIN);
     flush_side_leds = true;
     side_led_on = 1;

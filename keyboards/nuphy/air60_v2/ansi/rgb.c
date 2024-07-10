@@ -105,7 +105,7 @@ bool is_side_rgb_off(void)
 
 
 void side_rgb_refresh(void) {
-    if (!is_side_rgb_off() || user_config.ee_side_light > 0) {
+    if (!is_side_rgb_off() || (user_config.ee_side_light > 0 && user_config.ee_side_mode != SIDE_OFF)) {
         pwr_led_on(); // power on side LED before refresh
         set_sys_light();
     }
