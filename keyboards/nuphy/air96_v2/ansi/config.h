@@ -84,4 +84,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RF_QUEUE_SIZE                       64
 
 #define RGB_MATRIX_DISABLE_KEYCODES
-#define RGB_MATRIX_SOLID_REACTIVE_GRADIENT_MODE
+// #define RGB_MATRIX_SOLID_REACTIVE_GRADIENT_MODE

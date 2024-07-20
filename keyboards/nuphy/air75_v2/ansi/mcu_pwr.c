@@ -103,11 +103,12 @@ void enter_deep_sleep(void) {
     enter_light_sleep();
 
     //------------------------ Turn off USB if not used
+    /*
     if (dev_info.link_mode != LINK_USB) {
         f_usb_deinit = 1;
         m_deinit_usb_072();
     }
-
+    */
     for (uint8_t i = 0; i < MATRIX_COLS; ++i) {
         gpio_set_pin_output_push_pull(col_pins[i]);
         gpio_write_pin_high(col_pins[i]);

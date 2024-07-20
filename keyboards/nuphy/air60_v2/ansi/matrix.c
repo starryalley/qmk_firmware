@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define colB_bits (PAL_PORT_BIT(PAL_PAD(B0)) | PAL_PORT_BIT(PAL_PAD(B1)) | PAL_PORT_BIT(PAL_PAD(B3)) | PAL_PORT_BIT(PAL_PAD(B10)) | PAL_PORT_BIT(PAL_PAD(B11)) | PAL_PORT_BIT(PAL_PAD(B12)) | PAL_PORT_BIT(PAL_PAD(B13)) | PAL_PORT_BIT(PAL_PAD(B14)) | PAL_PORT_BIT(PAL_PAD(B15)))
 
 #ifndef MATRIX_DEBOUNCE
-#    define MATRIX_DEBOUNCE 5
+#    define MATRIX_DEBOUNCE 10
 #endif
 
 /* matrix state(1:on, 0:off) */

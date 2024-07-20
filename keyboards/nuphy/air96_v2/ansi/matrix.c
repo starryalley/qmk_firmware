@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define colD_bits (PAL_PORT_BIT(PAL_PAD(D2)))
 
 #ifndef MATRIX_DEBOUNCE
-#    define MATRIX_DEBOUNCE 5
+#    define MATRIX_DEBOUNCE 10
 #endif
 
 /* matrix state(1:on, 0:off) */

@@ -105,11 +105,12 @@ void enter_deep_sleep(void) {
     enter_light_sleep();
 
     //------------------------ Turn off USB if not used
+    /*
     if (dev_info.link_mode != LINK_USB) {
         f_usb_deinit = 1;
         m_deinit_usb_072();
     }
-
+    */
     // Close timer
     // if (tim6_enabled) TIM_Cmd(TIM6, DISABLE);
 
