@@ -52,5 +52,9 @@ enum custom_keycodes {
     SLEEP_NOW,
     GAME_MODE,
     CAPS_WORD,
-    WIN_LOCK
+    WIN_LOCK,
+
+    DEBOUNCE_I,
+    DEBOUNCE_D,
+    DEBOUNCE_T
 };

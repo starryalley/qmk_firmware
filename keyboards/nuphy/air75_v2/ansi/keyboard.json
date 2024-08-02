@@ -4,7 +4,7 @@
     "bootloader": "stm32-dfu",
     "processor": "STM32F072",
     "build": {
-        "debounce_type": "asym_eager_defer_pk",
+        "debounce_type": "custom",
         "lto": true
     },
     "debounce": 5,
@@ -32,10 +32,11 @@
         "no_startup_check": true
     },
     "qmk": {
-        "tap_keycode_delay": 8
+        "tap_keycode_delay": 0
     },
     "tapping": {
-        "term": 300
+        "term": 200,
+        "term_per_key": false
     },
     "dynamic_keymap": {
         "layer_count": 8
@@ -56,8 +57,8 @@
       "val_steps": 26,
       "speed_steps": 52,
       "sleep": true,
-      "led_process_limit": 12,
-      "led_flush_limit": 18,
+      "led_process_limit": 8,
+      "led_flush_limit": 26,
       "default": { 
           "animation": "cycle_left_right",
           "hue": 0,

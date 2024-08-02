@@ -712,8 +712,12 @@ void rgb_test_show(void) {
     }
 }
 
-void signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time) {
-    rgb_state           = state > 0 ? 1 : 0;
+void signal_rgb_led(uint8_t color, uint8_t bin_type, uint8_t start_led, uint8_t end_led, uint16_t show_time) {
+    if (bin_type) {
+        rgb_color = color > 0 ? 3 : 0;
+    } else {
+        rgb_color = color;
+    }
     rgb_start_led       = start_led;
     rgb_end_led         = end_led == UINT8_MAX ? start_led : end_led;
     rgb_show_time       = show_time;
@@ -724,13 +728,9 @@ void rgb_led_indicator(void) {
     if (rgb_show_time == 0) { return; }
     if (rgb_indicator_timer == 0) { rgb_indicator_timer = timer_read32(); }
     if (timer_elapsed32(rgb_indicator_timer) < rgb_show_time || rgb_show_time == UINT16_MAX) {
-        current_rgb.r = 0xFF;
-        current_rgb.g = 0x00;
-        current_rgb.b = 0x00;
-        if (rgb_state) {
-            current_rgb.r = 0x00;
-            current_rgb.g = 0xFF;
-        }
+        current_rgb.r = colour_lib[rgb_color][0];
+        current_rgb.g = colour_lib[rgb_color][1];
+        current_rgb.b = colour_lib[rgb_color][2];
 
         rgb_required = 2;
         for (uint8_t i = rgb_start_led; i <= rgb_end_led; i++) {
@@ -761,10 +761,12 @@ void numlock_rgb_show(void) {
 void rgb_matrix_step_game_mode(uint8_t step) {
     if (step) {
         user_config.game_rgb_mod++;
-        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 1; }
+        if (user_config.game_rgb_mod > RGB_MATRIX_CUSTOM_GAME_KEYS) { user_config.game_rgb_mod = 1; }
+        else if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
     } else {
-        if (user_config.game_rgb_mod > 1) { user_config.game_rgb_mod--; }
-        else { user_config.game_rgb_mod = 3; }
+        user_config.game_rgb_mod--;
+        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 3; }
+        else if (user_config.game_rgb_mod < 1) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
     }
 
     rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);

@@ -91,7 +91,7 @@ void sleep_handle(void) {
         rf_linking_time  = 0;
     } else if (dev_info.rf_state == RF_DISCONNECT) {
             rf_disconnect_time++;
-        if (rf_disconnect_time > 5 * 2) {
+        if (rf_disconnect_time > 10 * 2) {
             f_goto_deepsleep   = 1;
             f_goto_sleep       = 1;
             rf_disconnect_time = 0;
