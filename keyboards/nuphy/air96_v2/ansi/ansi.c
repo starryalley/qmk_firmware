@@ -50,6 +50,9 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case SIDE_VAI:
         case SIDE_VAD:
         case SIDE_HUI:
+        case DEBOUNCE_I:
+        case DEBOUNCE_D:
+        case DEBOUNCE_T:
             call_update_eeprom_data(&user_update);
             break;
 
@@ -71,6 +74,13 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case BAT_SHOW:
         case SLEEP_NOW:
             if (game_mode_enable) { return false; }
+            break;
+
+        case KC_LEFT:
+        case KC_RIGHT:
+        case KC_A:
+        case KC_D:
+            if (!game_mode_enable) { return true; }
             break;
 
         case RGB_TOG:
@@ -148,10 +158,45 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-
         case CAPS_WORD:
             f_caps_word_tg = record->event.pressed;
             return false;
+
+        case KC_A:
+            left_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                if (right_pressed > 2) { unregister_code(KC_D); }
+            } else {
+                if (right_pressed > 2) { register_code(KC_D); }
+            }
+            return true;
+
+        case KC_D:
+            right_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                if (left_pressed > 2) { unregister_code(KC_A); }
+            } else {
+                if (left_pressed > 2) { register_code(KC_A); }
+            }
+            return true;
+
+        case KC_LEFT:
+            left_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                if (right_pressed > 2) { unregister_code(KC_RIGHT); }
+            } else {
+                if (right_pressed > 2) { register_code(KC_RIGHT); }
+            }
+            return true;
+
+        case KC_RIGHT:
+            right_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                if (left_pressed > 2) { unregister_code(KC_LEFT); }
+            } else {
+                if (left_pressed > 2) { register_code(KC_LEFT); }
+            }
+            return true;
 
         case KC_LGUI:
         case WIN_LOCK:
@@ -441,6 +486,24 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
+        case DEBOUNCE_I:
+            if (record->event.pressed) {
+                debounce_value(1);
+            }
+            return true;
+
+        case DEBOUNCE_D:
+            if (record->event.pressed) {
+                debounce_value(0);
+            }
+            return true;
+
+        case DEBOUNCE_T:
+            if (record->event.pressed) {
+                debounce_type();
+            }
+            return true;
+
         default:
             return true;
     }
@@ -448,6 +511,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 void post_process_record_kb(uint16_t keycode, keyrecord_t *record) {
+#ifndef NO_DEBUG
     switch (keycode) {
         case DB_TOGG:
             dprintf("Keyboard: %s @ QMK: %s | BUILD: %s (%s)\n", QMK_KEYBOARD, QMK_VERSION, QMK_BUILDDATE, QMK_GIT_HASH);
@@ -456,6 +520,7 @@ void post_process_record_kb(uint16_t keycode, keyrecord_t *record) {
         default:
             break;
     }
+#endif
 }
 
 bool rgb_matrix_indicators_kb(void) {

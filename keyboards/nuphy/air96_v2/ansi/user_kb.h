@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 #include "usb_main.h"
 #include "layer_names.h"
+#include "keymap_introspection.h"
 
 typedef enum {
     RX_Idle,
@@ -94,7 +95,7 @@ typedef enum {
 #define SYS_SW_WIN                0xa1
 #define SYS_SW_MAC                0xa2
 
-#define RF_LINK_SHOW_TIME         300
+#define RF_LINK_SHOW_TIME         200
 
 #define HOST_USB_TYPE             0
 #define HOST_BLE_TYPE             1
@@ -117,6 +118,12 @@ typedef enum {
 #define    WIN_LED                (dev_info.sys_sw_state == SYS_SW_WIN ? 89 : 90)
 #define    NUMLOCK_LED            33
 #define    G_LED                  60
+#define    F1_LED                 1
+#define    D_LED                  58
+
+#ifndef DEBOUNCE
+#    define DEBOUNCE 5
+#endif
 
 #define USB_ACTIVE                ((dev_info.link_mode == LINK_USB && USB_DRIVER.state != USB_SUSPENDED) || (dev_info.link_mode != LINK_USB && dev_info.rf_charge == 0x03))
 
@@ -156,12 +163,16 @@ typedef struct
     uint8_t sleep_mode;
     uint8_t caps_word_enable;
     uint8_t numlock_state;
+    uint8_t debounce_ms;
+    uint8_t debounce_type;
     uint8_t game_side_colour;
     uint8_t game_side_light;
     uint8_t game_rgb_mod;
     uint8_t game_rgb_val;
     uint8_t game_rgb_hue;
     uint8_t game_rgb_sat;
+    uint8_t game_debounce_ms;
+    uint8_t game_debounce_type;
     uint8_t retain1;
     uint8_t retain2;
 } user_config_t;
@@ -206,6 +217,8 @@ extern uint32_t           eeprom_update_timer;
 extern bool               rgb_update;
 extern bool               user_update;
 extern uint8_t            rgb_required;
+extern uint16_t           left_pressed;
+extern uint16_t           right_pressed;
 
 extern bool               is_side_rgb_off(void);
 
@@ -241,7 +254,9 @@ void    matrix_io_delay(void);
 void    game_mode_tweak(void);
 void    user_debug(void);
 void    call_update_eeprom_data(bool* eeprom_update_init);
-void    signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time);
+void    signal_rgb_led(uint8_t color, uint8_t bin_type, uint8_t start_led, uint8_t end_led, uint16_t show_time);
+void    debounce_value(uint8_t dir);
+void    debounce_type(void);
 void    game_config_reset(uint8_t save_to_eeprom);
 void    rgb_matrix_step_game_mode(uint8_t step);
 uint8_t uart_send_cmd(uint8_t cmd, uint8_t ack_cnt, uint8_t delayms);

@@ -24,9 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 static bool f_usb_deinit  = 0;
 static bool rgb_led_on    = 0;
 
-void clear_report_buffer_and_queue(void);
-void clear_report_buffer(void);
-
 // Pin definitions
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
@@ -207,8 +204,8 @@ void exit_light_sleep(bool stm32_init) {
 
 void matrix_scan_repeat(uint8_t repeat) {
     do {
+        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory"); //nop nop
         matrix_scan();
-        __asm__ __volatile__("nop;nop;nop;\n\t" ::: "memory"); //nop nop 
     } while (repeat--);
 }
 
@@ -225,13 +222,16 @@ void exit_deep_sleep(void) {
     extern void matrix_init_custom(void);
     matrix_init_custom();
 
-    matrix_scan_repeat(1);
+    matrix_scan_repeat(2);
 
     // m_uart_gpio_set_low_speed();
 
     // Restore IO to working status
     gpio_set_pin_input_high(DEV_MODE_PIN); // PC0
     gpio_set_pin_input_high(SYS_MODE_PIN); // PC1
+
+    gpio_set_pin_input_high(A11);
+    gpio_set_pin_input_high(A12);
 
     /* set RF module boot pin high */
     // gpio_set_pin_input_high(NRF_BOOT_PIN);
@@ -241,12 +241,9 @@ void exit_deep_sleep(void) {
     gpio_write_pin_high(NRF_WAKEUP_PIN);
 
     // Flag for RF state.
-    clear_report_buffer();
     dev_info.rf_state = RF_LINKING;
     // dev_info.rf_state = RF_DISCONNECT;
-    rf_disconnect_delay = 0xff;
-    rf_link_show_time   = 250;
-    rf_linking_time     = 0;
+    rf_disconnect_delay = UINT8_MAX;
 
     // wait_us(1);
 

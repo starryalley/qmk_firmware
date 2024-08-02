@@ -91,7 +91,7 @@ void uart_send_repeat_from_queue(void) {
     static uint32_t        dequeue_timer = 0;
     static report_buffer_t report_buff   = {0};
 
-    if (timer_elapsed32(dequeue_timer) > 5 && !rf_queue.is_empty()) { //50
+    if (timer_elapsed32(dequeue_timer) > 10 && !rf_queue.is_empty()) { //50
         rf_queue.dequeue(&report_buff);
         dequeue_timer = timer_read32();
     }
@@ -102,8 +102,8 @@ void uart_send_repeat_from_queue(void) {
         if (report_buff.length > 6) { byte_report_buff = report_buff; }
     }
 
-    if (report_buff.repeat < 24) {
-        wait_us(1);
+    if (report_buff.repeat < 36) {
+        wait_us(25);
         uart_send_report(report_buff.cmd, report_buff.buffer, report_buff.length);
         report_buff.repeat++;
     }
@@ -300,7 +300,7 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
             Usart_Mgr.TXDBuf[5] = dev_info.link_mode;
 
             rf_linking_time     = 0;
-            rf_disconnect_delay = 0xff;
+            rf_disconnect_delay = UINT8_MAX;
             break;
         }
 
@@ -312,7 +312,7 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
             Usart_Mgr.TXDBuf[6] = dev_info.link_mode + 1;
 
             rf_linking_time     = 0;
-            rf_disconnect_delay = 0xff;
+            rf_disconnect_delay = UINT8_MAX;
             f_rf_new_adv_ok     = 0;
             break;
         }
@@ -428,7 +428,7 @@ void dev_sts_sync(void) {
         if (dev_info.rf_state != RF_CONNECT) {
             if (rf_disconnect_delay >= 15) {
                 rf_blink_cnt      = 3;
-                if (rf_link_show_time == RF_LINK_SHOW_TIME) { rf_link_show_time = 0; }
+                rf_link_show_time = 0;
                 link_state_temp   = dev_info.rf_state;
             } else {
                 rf_disconnect_delay++;
@@ -440,7 +440,7 @@ void dev_sts_sync(void) {
 
             if (link_state_temp != RF_CONNECT) {
                 link_state_temp   = RF_CONNECT;
-                if (rf_link_show_time == RF_LINK_SHOW_TIME) { rf_link_show_time = 0; }
+                rf_link_show_time = 0;
             }
         }
     }

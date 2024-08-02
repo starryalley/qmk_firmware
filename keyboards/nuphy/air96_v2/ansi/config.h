@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DRIVER_2_LED_TOTAL                  (42 + 10)
 #define RGB_MATRIX_LED_COUNT                (DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL)
 
-#define EECONFIG_KB_DATA_SIZE               18
+#define EECONFIG_KB_DATA_SIZE               22
 #define GPIO_INPUT_PIN_DELAY                6
 #define RF_QUEUE_SIZE                       64
 

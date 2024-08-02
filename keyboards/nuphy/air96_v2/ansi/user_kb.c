@@ -55,6 +55,9 @@ uint16_t       gmode_reset_press_delay = 0;
 uint32_t       sys_show_timer          = 0;
 uint32_t       sleep_show_timer        = 0;
 
+uint16_t       left_pressed            = 0;
+uint16_t       right_pressed           = 0;
+
 host_driver_t *m_host_driver           = 0;
 
 uint16_t       link_timeout            = NO_ACT_TIME_MINUTE;
@@ -63,6 +66,8 @@ uint32_t       deep_sleep_delay        = NO_ACT_TIME_MINUTE * 6;
 uint32_t       eeprom_update_timer     = 0;
 bool           user_update             = 0;
 bool           rgb_update              = 0;
+
+char           debounce_algo[3][20]    = { "sym_defer_pk", "asym_eager_defer_pk", "sym_eager_pr" };
 
 extern host_driver_t      rf_host_driver;
 
@@ -191,6 +196,11 @@ void custom_key_press(void) {
     }  else {
         gmode_reset_press_delay = 0;
     }
+
+    // SnapTap function
+
+    if (left_pressed)  {  left_pressed++; }
+    if (right_pressed) { right_pressed++; }
 
     if (f_caps_word_tg) {
         caps_word_tg_delay++;
@@ -404,6 +414,8 @@ void delay_update_eeprom_data(void) {
             read_user_config.game_rgb_mod     = rgb_matrix_config.mode;
             read_user_config.game_side_colour = user_config.ee_side_colour;
             read_user_config.game_side_light  = user_config.ee_side_light;
+            read_user_config.game_debounce_ms   = user_config.debounce_ms;
+            read_user_config.game_debounce_type = user_config.debounce_type;
 
             eeconfig_update_kb_datablock(&read_user_config);
         } else {
@@ -428,6 +440,24 @@ void delay_update_eeprom_data(void) {
 void game_mode_tweak(void)
 {
     if (game_mode_enable) {
+        if (eeprom_update_timer != 0) {
+            eeprom_update_timer = 0;
+            if (user_update) {
+                eeconfig_update_kb_datablock(&user_config);
+                user_update = 0;
+#ifndef NO_DEBUG
+                dprint("Updating EEPROM: user_config\n");
+#endif
+            }
+            if (rgb_update) {
+                eeconfig_update_rgb_matrix();
+                rgb_update          = 0;
+#ifndef NO_DEBUG
+                dprint("Updating EEPROM:  rgb_config\n");
+#endif
+            }
+        }
+
         pwr_led_on();
         rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
         rgb_matrix_config.hsv.v    = user_config.game_rgb_val;
@@ -437,13 +467,73 @@ void game_mode_tweak(void)
         user_config.ee_side_rgb    = 0;
         user_config.ee_side_colour = user_config.game_side_colour;
         user_config.ee_side_light  = user_config.game_side_light;
+        user_config.debounce_ms    = user_config.game_debounce_ms;
+        user_config.debounce_type  = user_config.game_debounce_type;
         if (user_config.numlock_state != 0) { user_config.numlock_state = 1; }
     } else {
         rgb_matrix_reload_from_eeprom();
         eeconfig_read_kb_datablock(&user_config);
     }
+
+#ifndef NO_DEBUG
+    dprintf("debounce:      %dms\n", user_config.debounce_ms);
+    dprintf("debounce type: %s\n", debounce_algo[user_config.debounce_type]);
+#endif
+
     pwr_led_on();
-    signal_rgb_led(game_mode_enable, G_LED, G_LED, 2000);
+    signal_rgb_led(game_mode_enable, 1, G_LED, G_LED, 2000);
+}
+
+void debounce_value(uint8_t dir) {
+    uint8_t step, my_color, end_led;
+    // uint8_t* debounce_ms = game_mode_enable ? &user_config.game_debounce_ms : &user_config.debounce_ms;
+    // uint8_t* debounce_ms = &user_config.debounce_ms;
+
+    if (user_config.debounce_ms < 11 - dir) {
+        step = 1;
+    } else if (user_config.debounce_ms < 31 - dir) {
+        step = 2;
+    } else if (user_config.debounce_ms < 76 - dir) {
+        step = 5;
+    } else {
+        step = 25;
+    }
+
+    if (dir) {
+        if (user_config.debounce_ms < 100) { user_config.debounce_ms += step; }
+    } else {
+        if (user_config.debounce_ms > 1)   { user_config.debounce_ms -= step; }
+    }
+
+    if (user_config.debounce_ms <= 10) {
+        my_color = 3;
+        end_led  = user_config.debounce_ms - 1;
+    } else if (user_config.debounce_ms <= 30) {
+        my_color = 2;
+        end_led  = (user_config.debounce_ms - 10) / 2 - 1;
+    } else if (user_config.debounce_ms <= 75) {
+        my_color = 0;
+        end_led  = (user_config.debounce_ms - 30) / 5 - 1;
+    } else {
+        my_color = 7;
+        end_led  = 9;
+    }
+
+#ifndef NO_DEBUG
+    dprintf("debounce:      %dms\n", user_config.debounce_ms);
+#endif
+
+    signal_rgb_led(my_color, 0, F1_LED, F1_LED + end_led, 3000);
+}
+
+void debounce_type(void) {
+    if (user_config.debounce_type == 2) { user_config.debounce_type = 0; }
+    else { user_config.debounce_type++; }
+
+#ifndef NO_DEBUG
+    dprintf("debounce type: %s\n", debounce_algo[user_config.debounce_type]);
+#endif
+    signal_rgb_led(user_config.debounce_type == 1 ? 3 : user_config.debounce_type, 0, D_LED, UINT8_MAX, 3000);
 }
 
 #ifndef NO_DEBUG
@@ -507,7 +597,7 @@ void matrix_io_delay(void) {
 #else
     if (MATRIX_IO_DELAY == 0 || game_mode_enable == 1) {
 #endif
-        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory");  // sleep 0.3125 us (312.5 ns)
+        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;nop;nop;\n\t" ::: "memory");  // sleep 0.415 us (415 ns)
         return;
     }
 
