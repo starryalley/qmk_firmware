@@ -95,7 +95,7 @@ typedef enum {
 #define SYS_SW_WIN                0xa1
 #define SYS_SW_MAC                0xa2
 
-#define RF_LINK_SHOW_TIME         300
+#define RF_LINK_SHOW_TIME         200
 
 #define HOST_USB_TYPE             0
 #define HOST_BLE_TYPE             1
