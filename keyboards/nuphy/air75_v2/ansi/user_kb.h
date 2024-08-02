@@ -119,7 +119,7 @@ typedef enum {
 #define    NUMLOCK_LED            14
 #define    G_LED                  54
 #define    D_LED                  56
-#define    FI_LED                 1
+#define    F1_LED                 1
 
 #define USB_ACTIVE                ((dev_info.link_mode == LINK_USB && USB_DRIVER.state != USB_SUSPENDED) || (dev_info.link_mode != LINK_USB && dev_info.rf_charge == 0x03))
 

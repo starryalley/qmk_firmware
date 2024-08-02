@@ -221,7 +221,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (get_highest_layer(layer_state) == M_LAYER || keycode == WIN_LOCK) {
                     keymap_config.no_gui = !keymap_config.no_gui;
-                    signal_rgb_led(!keymap_config.no_gui, WIN_LED, WIN_LED, 3000);
+                    signal_rgb_led(!keymap_config.no_gui, 1, WIN_LED, WIN_LED, 3000);
                     return false;
                 }
             }

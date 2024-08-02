@@ -67,6 +67,7 @@ uint32_t       deep_sleep_delay        = NO_ACT_TIME_MINUTE * 6;
 uint32_t       eeprom_update_timer     = 0;
 bool           user_update             = 0;
 bool           rgb_update              = 0;
+char           debounce_algo[3][20]    = { "sym_defer_pk", "asym_eager_defer_pk", "sym_eager_pr" };
 
 extern host_driver_t      rf_host_driver;
 
@@ -202,8 +203,8 @@ void custom_key_press(void) {
     }
 
     // SnapTap function
-    if (left_pressed)  {  left_pressed++; };
-    if (right_pressed) { right_pressed++; };
+    if (left_pressed)  {  left_pressed++; }
+    if (right_pressed) { right_pressed++; }
 
     // Toggle Caps Word
     if (f_caps_word_tg) {
@@ -214,7 +215,7 @@ void custom_key_press(void) {
 #ifndef NO_DEBUG
             dprintf("caps_word_state: %s\n", user_config.caps_word_enable ? "ON" : "OFF");
 #endif
-            signal_rgb_led(user_config.caps_word_enable, CAPS_LED, CAPS_LED, CAPS_WORD_IDLE_TIMEOUT);
+            signal_rgb_led(user_config.caps_word_enable, 1, CAPS_LED, CAPS_LED, CAPS_WORD_IDLE_TIMEOUT);
         }
     } else {
         caps_word_tg_delay = 0;
@@ -483,7 +484,7 @@ void game_mode_tweak(void)
 #endif
 
     pwr_rgb_led_on();
-    signal_rgb_led(game_mode_enable, G_LED, G_LED, 2000);
+    signal_rgb_led(game_mode_enable, 1, G_LED, G_LED, 2000);
 }
 
 void debounce_value(uint8_t dir) {
