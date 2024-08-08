@@ -32,7 +32,7 @@
         "no_startup_check": true
     },
     "qmk": {
-        "tap_keycode_delay": 0
+        "tap_keycode_delay": 2
     },
     "tapping": {
         "term": 200,

@@ -47,8 +47,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
 #define DYNAMIC_KEYMAP_MACRO_DELAY          8
 
+#define WAIT_US_TIMER                       GPTD14
+
 #define WS2812_SPI_USE_CIRCULAR_BUFFER
-#define EECONFIG_KB_DATA_SIZE               22
+#define EECONFIG_KB_DATA_SIZE               24
 #define GPIO_INPUT_PIN_DELAY                6
 #define RF_QUEUE_SIZE                       64
 

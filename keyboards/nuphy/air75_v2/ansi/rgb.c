@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "rgb_table.h"
 #include "ws2812.h"
+// #include "usb_main.h"
 #include "mcu_pwr.h"
 
 /* side rgb mode */
@@ -32,13 +33,14 @@ enum {
 
 bool     flush_side_leds      = 0;
 uint8_t  side_play_point      = 0;
-uint8_t  sys_light            = 3;
 uint32_t side_one_timer       = 0;
 uint8_t  rgb_color            = 0;
 uint8_t  rgb_start_led        = 0;
 uint8_t  rgb_end_led          = 0;
 uint16_t rgb_show_time        = 0;
 uint32_t rgb_indicator_timer  = 0;
+
+uint8_t  sys_light            = 3;
 
 rgb_led_t side_leds[SIDE_LED_NUM] = {0};
 
@@ -159,7 +161,6 @@ void side_light_control(uint8_t bright) {
     } else {
         if (user_config.ee_side_light > 0) { user_config.ee_side_light--; }
     }
-    // set_sys_light();
 #ifndef NO_DEBUG
     dprintf("side matrix light_control [NOEEPROM]: %d\n", user_config.ee_side_light);
 #endif
@@ -244,9 +245,11 @@ void sys_sw_led_show(void) {
             current_rgb.g = 0x00;
             current_rgb.b = 0x80;
         }
+
         if (timer_elapsed32(sys_show_timer) >= 2900) {
             sys_show_timer = 0;
         }
+
         if ((timer_elapsed32(sys_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
@@ -273,9 +276,11 @@ void sleep_sw_led_show(void) {
                 current_rgb.g = 0x80;
                 break;
         }
+
         if (timer_elapsed32(sleep_show_timer) >= 2900) {
             sleep_show_timer = 0;
         }
+
         if ((timer_elapsed32(sleep_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
@@ -353,7 +358,7 @@ static void side_wave_mode_show(void) {
     } else {
         light_point_playing(0, 2, BREATHE_TAB_LEN, &side_play_point);
     }
-    
+
     play_index = side_play_point;
     for (uint8_t i = 0; i < SIDE_LINE; i++) {
         if (user_config.ee_side_rgb) {
@@ -511,9 +516,9 @@ void rf_led_show(void) {
     set_side_rgb(LEFT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
     // light up corresponding BT/RF key
     if (dev_info.link_mode <= LINK_BT_3) {
-        uint8_t my_pos = dev_info.link_mode == LINK_RF_24 ? 26 : (30 - dev_info.link_mode);
+        uint8_t my_pos = dev_info.link_mode == LINK_RF_24 ? 4 : dev_info.link_mode;
         rgb_required = 1;
-        rgb_matrix_set_color(my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
+        rgb_matrix_set_color(led_idx.KC_GRV - my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
     }
 }
 
@@ -547,6 +552,7 @@ void bat_num_led(void)
     for(uint8_t i=0; i < bat_pct; i++) {
         rgb_matrix_set_color(29 - i, r, g, b);
     }
+
 
     // set percent
     if (bat_percent % 10 == 0) {
@@ -746,7 +752,7 @@ void caps_word_show(void) {
     if (game_mode_enable || !user_config.caps_word_enable) { return; }
     if (is_caps_word_on()) {
         rgb_required = 2;
-        rgb_matrix_set_color(CAPS_LED, RGB_CYAN);
+        rgb_matrix_set_color(led_idx.KC_CAPS, RGB_CYAN);
     }
 }
 
@@ -754,7 +760,7 @@ void numlock_rgb_show(void) {
     if (user_config.numlock_state != 2) { return; }
     if (host_keyboard_led_state().num_lock) {
         rgb_required = 2;
-        rgb_matrix_set_color(NUMLOCK_LED, RGB_WHITE);
+        rgb_matrix_set_color(led_idx.KC_NUM, RGB_WHITE);
     }
 }
 
