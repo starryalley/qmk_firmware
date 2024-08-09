@@ -47,7 +47,7 @@ void sleep_handle(void) {
 
     if (user_config.sleep_mode != 1 || f_rf_sleep) {
         f_goto_deepsleep = 0;
-    } else if (no_act_time >= deep_sleep_delay) {
+    } else if (no_act_time >= (user_config.light_sleep + DEEP_SLEEP_TIME) * T_MIN) {
         f_goto_deepsleep = 1;
     }
 
@@ -66,7 +66,7 @@ void sleep_handle(void) {
         enter_light_sleep();
         f_wakeup_prepare = 1;
     }
-
+        
     // sleep check
     if (f_goto_sleep || f_wakeup_prepare) {
         return;
@@ -81,7 +81,7 @@ void sleep_handle(void) {
         } else {
             usb_suspend_debounce = 0;
         }
-    } else if (no_act_time >= sleep_time_delay) {
+    } else if (no_act_time >= (user_config.light_sleep * T_MIN)) {
         f_goto_sleep     = 1;
     } else if (rf_linking_time >= (dev_info.link_mode == LINK_RF_24 ? (link_timeout / 4) : link_timeout)) {
         f_goto_deepsleep = 1;

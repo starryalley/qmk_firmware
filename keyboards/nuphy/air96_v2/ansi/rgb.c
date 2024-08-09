@@ -122,7 +122,6 @@ void side_light_control(uint8_t bright) {
     } else {
         if (user_config.ee_side_light > 0) { user_config.ee_side_light--; }
     }
-    // set_sys_light();
 #ifndef NO_DEBUG
     dprintf("side matrix light_control [NOEEPROM]: %d\n", user_config.ee_side_light);
 #endif
@@ -237,9 +236,11 @@ void sys_sw_led_show(void) {
             current_rgb.g = 0x00;
             current_rgb.b = SIDE_BLINK_LIGHT;
         }
-	if (timer_elapsed32(sys_show_timer) >= 2900) {
+
+        if (timer_elapsed32(sys_show_timer) >= 2900) {
             sys_show_timer = 0;
         }
+
         if ((timer_elapsed32(sys_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
@@ -266,9 +267,11 @@ void sleep_sw_led_show(void) {
                 current_rgb.g = SIDE_BLINK_LIGHT;
                 break;
         }
+
         if (timer_elapsed32(sleep_show_timer) >= 2900) {
             sleep_show_timer = 0;
         }
+
         if ((timer_elapsed32(sleep_show_timer) / 500) % 2 == 0) {
             set_side_rgb(RIGHT_SIDE + SYS_MARK, current_rgb.r, current_rgb.g, current_rgb.b);
         } else {
@@ -483,7 +486,7 @@ void rf_led_show(void) {
     if (rf_blink_cnt) {
         if (dev_info.rf_state == RF_PAIRING) {
             rf_blink_period = RF_LED_PAIR_PERIOD;
-	} else {
+        } else {
             rf_blink_period = RF_LED_LINK_PERIOD;
         }
 
@@ -501,9 +504,9 @@ void rf_led_show(void) {
 
     // light up corresponding BT/RF key
     if (dev_info.link_mode <= LINK_BT_3) {
-        uint8_t my_pos = dev_info.link_mode == LINK_RF_24 ? 23 : (19 + dev_info.link_mode);
+        uint8_t my_pos = dev_info.link_mode == LINK_RF_24 ? 4 : dev_info.link_mode;
         rgb_required = 1;
-        rgb_matrix_set_color(my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
+        rgb_matrix_set_color(led_idx.KC_GRV + my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
     }
 }
 
@@ -579,6 +582,7 @@ void bat_percent_led(void)
     for (uint8_t i = bat_end_led + 1; i < SIDE_LINE; i++) {
         rgb_matrix_set_color(SIDE_INDEX + 9 - i, RGB_OFF);
     }
+
 }
 
 /**
@@ -712,7 +716,7 @@ void rgb_led_indicator(void) {
         current_rgb.r = colour_lib[rgb_color][0];
         current_rgb.g = colour_lib[rgb_color][1];
         current_rgb.b = colour_lib[rgb_color][2];
-
+        
         rgb_required = 2;
         for (uint8_t i = rgb_start_led; i <= rgb_end_led; i++) {
             rgb_matrix_set_color(i, current_rgb.r, current_rgb.g, current_rgb.b);
@@ -722,12 +726,12 @@ void rgb_led_indicator(void) {
         rgb_show_time       = 0;
     }
 }
-
+    
 void caps_word_show(void) {
     if (game_mode_enable || !user_config.caps_word_enable) { return; }
     if (is_caps_word_on()) {
         rgb_required = 2;
-        rgb_matrix_set_color(CAPS_LED, RGB_CYAN);
+        rgb_matrix_set_color(led_idx.KC_CAPS, RGB_CYAN);
     }
 }
 
@@ -735,7 +739,7 @@ void numlock_rgb_show(void) {
     if (user_config.numlock_state != 2) { return; }
     if (host_keyboard_led_state().num_lock) {
         rgb_required = 2;
-        rgb_matrix_set_color(NUMLOCK_LED, RGB_WHITE);
+        rgb_matrix_set_color(led_idx.KC_NUM, RGB_WHITE);
     }
 }
 
@@ -803,6 +807,7 @@ void realtime_led_process(void) {
 
 void led_show(void) {
     if (f_wakeup_prepare) { return; }
+    // set_sys_light();
     side_rgb_refresh();
     normal_led_process();
     realtime_led_process();

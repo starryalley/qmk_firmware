@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static bool f_usb_deinit  = 0;
 static bool rgb_led_on    = 0;
+static bool tim6_enabled  = false;
 
 // Pin definitions
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
@@ -61,8 +62,6 @@ void m_deinit_usb_072(void) {
  * @brief   Low Power mode
  *
  ================================================================*/
-// #include "hal_usb.h"
-// #include "usb_main.h"
 void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex) {
     uint32_t tmp = 0x00;
 
@@ -71,7 +70,6 @@ void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex
     SYSCFG->EXTICR[EXTI_PinSourcex >> 0x02] |= (((uint32_t)EXTI_PortSourceGPIOx) << (0x04 * (EXTI_PinSourcex & (uint8_t)0x03)));
 }
 
-// #include "hal_lld.h"
 #define EXTI_PortSourceGPIOA ((uint8_t)0x00)
 #define EXTI_PortSourceGPIOB ((uint8_t)0x01)
 #define EXTI_PortSourceGPIOC ((uint8_t)0x02)
@@ -108,11 +106,13 @@ void enter_deep_sleep(void) {
         m_deinit_usb_072();
     }
     */
-    // Close timer
-    // if (tim6_enabled) TIM_Cmd(TIM6, DISABLE);
 
     //------------------------ Configure WakeUp Key
 
+#if !defined(DISABLE_MCU_SLEEP)
+    // Close timer
+    if (tim6_enabled) TIM_Cmd(TIM6, DISABLE);
+ 
     for (uint8_t i = 0; i < MATRIX_COLS; ++i) {
         gpio_set_pin_output_push_pull(col_pins[i]);
         gpio_write_pin_high(col_pins[i]);
@@ -167,10 +167,11 @@ void enter_deep_sleep(void) {
 
     gpio_set_pin_output_push_pull(NRF_WAKEUP_PIN);
     gpio_write_pin_high(NRF_WAKEUP_PIN);
-   */
+    */
 
     // Enter low power mode and wait for interrupt signal
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+#endif
 }
 
 /**
@@ -188,7 +189,10 @@ void exit_light_sleep(bool stm32_init) {
     led_pwr_wake_handle();
 
     // Reinitialize the system clock
-    if (stm32_init) { stm32_clock_init(); }
+    if (stm32_init) {
+        stm32_clock_init(); 
+        if (tim6_enabled) { TIM_Cmd(TIM6, ENABLE); }
+    }
 
     // Handshake send to wake RF
     // uart_send_cmd(CMD_HAND, 0, 1);
@@ -199,12 +203,11 @@ void exit_light_sleep(bool stm32_init) {
         restart_usb_driver(&USB_DRIVER);
         f_usb_deinit = 0;
     }
-
 }
 
 void matrix_scan_repeat(uint8_t repeat) {
     do {
-        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory"); //nop nop
+        __asm__ __volatile__("nop;nop;nop;nop;nop;nop;\n\t" ::: "memory");
         matrix_scan();
     } while (repeat--);
 }
@@ -215,17 +218,17 @@ void matrix_scan_repeat(uint8_t repeat) {
  *       This is mostly Nuphy's unreleased logic with cleanup/refactoring by me.
  */
 void exit_deep_sleep(void) {
-
+ 
     // Matrix initialization & Scan
     // extern void matrix_init_pins(void);
     // matrix_init_pins();
     extern void matrix_init_custom(void);
     matrix_init_custom();
-
     matrix_scan_repeat(2);
 
     // m_uart_gpio_set_low_speed();
 
+#if !defined(DISABLE_MCU_SLEEP)
     // Restore IO to working status
     gpio_set_pin_input_high(DEV_MODE_PIN); // PC0
     gpio_set_pin_input_high(SYS_MODE_PIN); // PC1
@@ -242,12 +245,11 @@ void exit_deep_sleep(void) {
 
     // Flag for RF state.
     dev_info.rf_state = RF_LINKING;
-    // dev_info.rf_state = RF_DISCONNECT;
     rf_disconnect_delay = UINT8_MAX;
-
-    // wait_us(1);
+    rf_linking_time     = 0;
 
     exit_light_sleep(true);
+#endif
 }
 
 void led_pwr_sleep_handle(void) {
@@ -374,8 +376,7 @@ void EXTI_StructInit(EXTI_InitTypeDef *EXTI_InitStruct) {
     EXTI_InitStruct->EXTI_LineCmd = DISABLE;
 }
 
-
-#if (0)
+//#if (0)
 void mcu_timer6_init(void) {
     NVIC_InitTypeDef        NVIC_InitStructure;
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -412,11 +413,9 @@ void mcu_timer6_init(void) {
  TIM6 handler is triggered by the timer above which is used as an interrupt.
  This is every 1ms so it effectively puts the CPU sleep mode only for 1s.
 */
-volatile uint8_t idle_sleep_cnt = 0;
 OSAL_IRQ_HANDLER(STM32_TIM6_HANDLER) {
     if (TIM_GetFlagStatus(TIM6, TIM_FLAG_Update) != ST_RESET) {
         TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-        idle_sleep_cnt++;
     }
 }
 
@@ -424,9 +423,6 @@ OSAL_IRQ_HANDLER(STM32_TIM6_HANDLER) {
 // That enables the STM32_TIM6_HANDLER but I think it runs on the interrupt interval of the TIM6 timer.
 void idle_enter_sleep(void) {
     TIM6->CNT      = 0;
-    idle_sleep_cnt = 0;
-    while (idle_sleep_cnt < 1) {
-        PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
-    }
+    PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 }
-#endif
+//#endif

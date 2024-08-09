@@ -94,18 +94,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;
 
         case BAT_SHOW:
-        case AWAKE_KEY:
         case SLEEP_NOW:
             if (game_mode_enable) { return false; }
             return true;
-/*
-        case KC_LEFT:
-        case KC_RIGHT:
-        case KC_A:
-        case KC_D:
-            if (!game_mode_enable) { return true; }
-            return true;
-*/
+
         case RGB_TOG:
             if (game_mode_enable) { return true; }
             call_update_eeprom_data(&rgb_update);

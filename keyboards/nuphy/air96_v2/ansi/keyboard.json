@@ -4,7 +4,7 @@
     "processor": "STM32F072",
     "bootloader": "stm32-dfu",
         "build": {
-        "debounce_type": "cusotm",
+        "debounce_type": "custom",
         "lto": true
     },
     "debounce": 5,
@@ -32,7 +32,7 @@
         "no_startup_check": true
     },
     "qmk": {
-        "tap_keycode_delay": 0
+        "tap_keycode_delay": 2
     },
     "tapping": {
         "term": 200,

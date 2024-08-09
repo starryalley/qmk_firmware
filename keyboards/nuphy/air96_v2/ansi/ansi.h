@@ -56,6 +56,9 @@ enum custom_keycodes {
 
     DEBOUNCE_I,
     DEBOUNCE_D,
-    DEBOUNCE_T
+    DEBOUNCE_T,
+
+    SLEEP_I,
+    SLEEP_D
 
 };

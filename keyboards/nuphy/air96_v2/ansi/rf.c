@@ -68,7 +68,7 @@ static uint8_t get_repeat_interval(void) {
 
     if (interval < 10) { return 20; }
     return 50;
-
+   
 }
 
 /**
@@ -91,7 +91,7 @@ void uart_send_repeat_from_queue(void) {
     static uint32_t        dequeue_timer = 0;
     static report_buffer_t report_buff   = {0};
 
-    if (timer_elapsed32(dequeue_timer) > 10 && !rf_queue.is_empty()) { //50
+    if (timer_elapsed32(dequeue_timer) > 12 && !rf_queue.is_empty()) { //50 //15 ? 
         rf_queue.dequeue(&report_buff);
         dequeue_timer = timer_read32();
     }
@@ -132,7 +132,7 @@ void uart_send_report_repeat(void) {
     uint8_t interval = get_repeat_interval();
 
     if (timer_elapsed32(uart_rpt_timer) >= interval) {
-        if (no_act_time <= 75) { // increments every 10ms, 50 = 500ms
+        if (no_act_time <= 75) { // increments every 10ms, 75 = 750ms
             if (byte_report_buff.cmd) {
                 uart_send_report(byte_report_buff.cmd, byte_report_buff.buffer, byte_report_buff.length);
                 byte_report_buff.repeat++;

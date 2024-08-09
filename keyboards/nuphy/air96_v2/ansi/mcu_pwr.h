@@ -118,7 +118,11 @@ void pwr_led_on(void);
 
 void led_pwr_sleep_handle(void);
 void led_pwr_wake_handle(void);
+
 void m_uart_gpio_set_low_speed(void);
 
 void clear_report_buffer_and_queue(void);
 void clear_report_buffer(void);
+
+void mcu_timer6_init(void);
+void idle_enter_sleep(void);
