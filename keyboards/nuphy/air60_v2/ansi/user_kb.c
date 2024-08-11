@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 user_config_t   user_config;
 user_config_t   read_user_config;
-led_index_t     led_idx
+led_index_t     led_idx;
 
 DEV_INFO_STRUCT dev_info = {
     .rf_battery = 100,
@@ -128,7 +128,7 @@ void custom_key_press(void) {
 
     // The device is restored to factory Settings
     if (f_dev_reset_press) {
-        f_dev_reset_press++
+        f_dev_reset_press++;
         if (f_dev_reset_press > MEDIUM_PRESS_DELAY) {
             f_dev_reset_press = 0;
 
@@ -486,7 +486,7 @@ void game_mode_tweak(void)
 #endif
 
     pwr_led_on();
-    signal_rgb_led(game_mode_enable, led_idx.KC_G, UINT8_MAX, 2000);
+    signal_rgb_led(game_mode_enable, 1, led_idx.KC_G, UINT8_MAX, 2000);
 }
 
 void reset_led_idx(void) {
