@@ -275,6 +275,7 @@
 			"title": "Debounce Type",
 			"shortName": "Debounce_T"
 		},
+		{
 			"name": "Sleep\nIncrease",
 			"title": "Light Sleep Increase",
 			"shortName": "Sleep_I"

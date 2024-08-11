@@ -211,7 +211,7 @@ extern uint32_t           sys_show_timer;
 extern uint32_t           sleep_show_timer;
 extern uint16_t           f_rf_sw_press;
 extern uint16_t           f_dev_reset_press;
-extern uint16_t           f_bat_num_show;
+extern bool               f_bat_num_show;
 extern uint16_t           f_rgb_test_press;
 extern uint16_t           f_caps_word_tg;
 extern uint16_t           f_numlock_press;
