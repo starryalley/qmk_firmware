@@ -91,7 +91,7 @@
 				"type": "color",
 				"content": ["id_qmk_rgb_matrix_color", 3, 4]
 			}
-		  ]
+			]
 		}
 		]
 	}
@@ -249,6 +249,41 @@
 			"name": "Win_Lock\nTrigger",
 			"title": "Win Lock",
 			"shortName": "Win_Lock"
+		},
+		{
+			"name": "Win_Lock\nTrigger",
+			"title": "Win Lock",
+			"shortName": "Win_Lock"
+		},
+		{
+			"name": "NumLock\nIndicator",
+			"title": "NumLock Indicator",
+			"shortName": "Numlock_Ind"
+		},
+		{
+			"name": "Debounce\nIncrease",
+			"title": "Debounce Increase",
+			"shortName": "Debounce_I"
+		},
+		{
+			"name": "Debounce\nDecrease",
+			"title": "Debounce Decrease",
+			"shortName": "Debounce_D"
+		},
+		{
+			"name": "Debounce\nType",
+			"title": "Debounce Type",
+			"shortName": "Debounce_T"
+		},
+			"name": "Sleep\nIncrease",
+			"title": "Light Sleep Increase",
+			"shortName": "Sleep_I"
+		},
+		{
+			"name": "Sleep\nDecrease",
+			"title": "Light Sleep Decrease",
+			"shortName": "Sleep_D"
 		}
+
 	]
 }

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 #include "usb_main.h"
 #include "layer_names.h"
+#include "keymap_introspection.h"
 
 typedef enum {
     RX_Idle,
@@ -87,11 +88,6 @@ typedef enum {
 #define LINK_BT_3                 3
 #define LINK_USB                  4
 
-#define LED_RF_24                 18
-#define LED_BT_1                  15
-#define LED_BT_2                  16
-#define LED_BT_3                  17
-
 #define UART_HEAD                 0x5A
 #define FUNC_VALID_LEN            32
 #define UART_MAX_LEN              64
@@ -99,7 +95,7 @@ typedef enum {
 #define SYS_SW_WIN                0xa1
 #define SYS_SW_MAC                0xa2
 
-#define RF_LINK_SHOW_TIME         300
+#define RF_LINK_SHOW_TIME         200
 
 #define HOST_USB_TYPE             0
 #define HOST_BLE_TYPE             1
@@ -112,17 +108,26 @@ typedef enum {
 #define MEDIUM_PRESS_DELAY        30
 #define LONG_PRESS_DELAY          50
 
-#define NO_ACT_TIME_MINUTE        (60 * 100)
+#define T_MIN                     (60 * 100)
+#define DEEP_SLEEP_TIME           4
 
 #define RGB_MATRIX_GAME_MODE      RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define SIDE_MATRIX_GAME_MODE     4
+#define SOCD_KEYS                 KC_A, KC_D, KC_LEFT, KC_RIGHT
 
+/*
 #define    CAPS_LED               28
 #define    LSHIFT_LED             41
 #define    WIN_LED                (dev_info.sys_sw_state == SYS_SW_WIN ? 56 : 57)
 #define    NUMLOCK_LED            47
 #define    G_LED                  33
+*/
 
+#ifndef DEBOUNCE
+#    define DEBOUNCE 5
+#endif
+
+#define sizeof_array(x)           (sizeof(x)/sizeof(*(x)))
 #define USB_ACTIVE                ((dev_info.link_mode == LINK_USB && USB_DRIVER.state != USB_SUSPENDED) || (dev_info.link_mode != LINK_USB && dev_info.rf_charge == 0x03))
 
 typedef struct
@@ -161,18 +166,38 @@ typedef struct
     uint8_t sleep_mode;
     uint8_t caps_word_enable;
     uint8_t numlock_state;
+    uint8_t debounce_ms;
+    uint8_t debounce_type;
+    uint8_t light_sleep;
+    uint8_t alt_light_sleep;
     uint8_t game_side_colour;
     uint8_t game_side_light;
     uint8_t game_rgb_mod;
     uint8_t game_rgb_val;
     uint8_t game_rgb_hue;
     uint8_t game_rgb_sat;
+    uint8_t game_debounce_ms;
+    uint8_t game_debounce_type;
     uint8_t retain1;
     uint8_t retain2;
 } user_config_t;
 
 _Static_assert(sizeof(user_config_t) == EECONFIG_KB_DATA_SIZE, "Mismatch in user EECONFIG stored data");
 
+
+typedef struct
+{
+    uint8_t KC_CAPS;
+    uint8_t KC_LGUI;
+    uint8_t KC_NUM;
+    uint8_t KC_D;
+    uint8_t KC_G;
+    uint8_t KC_F1;
+    uint8_t RF_DFU;
+    uint8_t KC_TAB;
+} led_index_t;
+
+extern led_index_t        led_idx;
 extern DEV_INFO_STRUCT    dev_info;
 extern user_config_t      user_config;
 
@@ -211,6 +236,8 @@ extern uint32_t           eeprom_update_timer;
 extern bool               rgb_update;
 extern bool               user_update;
 extern uint8_t            rgb_required;
+extern uint16_t           left_pressed;
+extern uint16_t           right_pressed;
 
 extern bool               is_side_rgb_off(void);
 
@@ -246,7 +273,12 @@ void    matrix_io_delay(void);
 void    game_mode_tweak(void);
 void    user_debug(void);
 void    call_update_eeprom_data(bool* eeprom_update_init);
-void    signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time);
+void    signal_rgb_led(uint8_t color, uint8_t bin_type, uint8_t start_led, uint8_t end_led, uint16_t show_time);
+void    reset_led_idx(void);
 void    game_config_reset(uint8_t save_to_eeprom);
+void    debounce_type(void);
+uint8_t step_helper(uint8_t dir, uint8_t value);
+uint8_t get_led_idx(uint16_t keycode);
+uint8_t get_array_idx(uint8_t *array, uint8_t size, uint16_t elm);
 void    rgb_matrix_step_game_mode(uint8_t step);
 uint8_t uart_send_cmd(uint8_t cmd, uint8_t ack_cnt, uint8_t delayms);

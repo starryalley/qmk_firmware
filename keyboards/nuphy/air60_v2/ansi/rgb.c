@@ -33,7 +33,7 @@ enum {
 uint8_t side_play_point       = 0;
 uint32_t side_one_timer       = 0;
 
-bool rgb_state                = 0;
+uint8_t rgb_color             = 0;
 uint8_t rgb_start_led         = 0;
 uint8_t rgb_end_led           = 0;
 uint16_t rgb_show_time        = 0;
@@ -237,7 +237,7 @@ void sys_sw_led_show(void) {
             current_rgb.g = 0x00;
             current_rgb.b = SIDE_BLINK_LIGHT;
         }
-	if (timer_elapsed32(sys_show_timer) >= 2900) {
+        if (timer_elapsed32(sys_show_timer) >= 2900) {
             sys_show_timer = 0;
         }
         if ((timer_elapsed32(sys_show_timer) / 500) % 2 == 0) {
@@ -483,7 +483,7 @@ void rf_led_show(void) {
     if (rf_blink_cnt) {
         if (dev_info.rf_state == RF_PAIRING) {
             rf_blink_period = RF_LED_PAIR_PERIOD;
-	} else {
+        } else {
             rf_blink_period = RF_LED_LINK_PERIOD;
         }
 
@@ -501,24 +501,9 @@ void rf_led_show(void) {
 
     // light up corresponding BT/RF key
     if (dev_info.link_mode <= LINK_BT_3) {
-        uint8_t my_pos;
-        switch (dev_info.link_mode)
-        {
-            case LINK_BT_1:
-                my_pos = LED_BT_1;
-                break;
-            case LINK_BT_2:
-                my_pos = LED_BT_2;
-                break;
-            case LINK_BT_3:
-                my_pos = LED_BT_3;
-                break;
-            default:
-                my_pos = LED_RF_24;
-                break;
-        }
+        uint8_t my_pos = dev_info.link_mode == LINK_RF_24 ? 4 : dev_info.link_mode;
         rgb_required = 1;
-        rgb_matrix_set_color(my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
+        rgb_matrix_set_color(led_idx.KC_TAB + my_pos, current_rgb.r, current_rgb.g, current_rgb.b);
     }
 }
 
@@ -708,8 +693,12 @@ void rgb_test_show(void) {
     }
 }
 
-void signal_rgb_led(uint8_t state, uint8_t start_led, uint8_t end_led, uint16_t show_time) {
-    rgb_state           = state > 0 ? 1 : 0;
+void signal_rgb_led(uint8_t color, uint8_t bin_type, uint8_t start_led, uint8_t end_led, uint16_t show_time) {
+    if (bin_type) {
+        rgb_color = color > 0 ? 3 : 0;
+    } else {
+        rgb_color = color;
+    }
     rgb_start_led       = start_led;
     rgb_end_led         = end_led == UINT8_MAX ? start_led : end_led;
     rgb_show_time       = show_time;
@@ -720,13 +709,9 @@ void rgb_led_indicator(void) {
     if (rgb_show_time == 0) { return; }
     if (rgb_indicator_timer == 0) { rgb_indicator_timer = timer_read32(); }
     if (timer_elapsed32(rgb_indicator_timer) < rgb_show_time || rgb_show_time == UINT16_MAX) {
-        current_rgb.r = 0xFF;
-        current_rgb.g = 0x00;
-        current_rgb.b = 0x00;
-        if (rgb_state) {
-            current_rgb.r = 0x00;
-            current_rgb.g = 0xFF;
-        }
+        current_rgb.r = colour_lib[rgb_color][0];
+        current_rgb.g = colour_lib[rgb_color][1];
+        current_rgb.b = colour_lib[rgb_color][2];
 
         rgb_required = 2;
         for (uint8_t i = rgb_start_led; i <= rgb_end_led; i++) {
@@ -742,7 +727,7 @@ void caps_word_show(void) {
     if (game_mode_enable || !user_config.caps_word_enable) { return; }
     if (is_caps_word_on()) {
         rgb_required = 2;
-        rgb_matrix_set_color(CAPS_LED, RGB_CYAN);
+        rgb_matrix_set_color(led_idx.KC_CAPS, RGB_CYAN);
     }
 }
 
@@ -750,17 +735,19 @@ void numlock_rgb_show(void) {
     if (user_config.numlock_state != 2) { return; }
     if (host_keyboard_led_state().num_lock) {
         rgb_required = 2;
-        rgb_matrix_set_color(NUMLOCK_LED, RGB_WHITE);
+        rgb_matrix_set_color(led_idx.KC_NUM, RGB_WHITE);
     }
 }
 
 void rgb_matrix_step_game_mode(uint8_t step) {
     if (step) {
         user_config.game_rgb_mod++;
-        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 1; }
+        if (user_config.game_rgb_mod > RGB_MATRIX_CUSTOM_GAME_KEYS) { user_config.game_rgb_mod = 1; }
+        else if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
     } else {
-        if (user_config.game_rgb_mod > 1) { user_config.game_rgb_mod--; }
-        else { user_config.game_rgb_mod = 3; }
+        user_config.game_rgb_mod--;
+        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 3; }
+        else if (user_config.game_rgb_mod < 1) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
     }
 
     rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);

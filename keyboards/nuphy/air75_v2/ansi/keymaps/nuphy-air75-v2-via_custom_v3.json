@@ -229,26 +229,51 @@
 			"name": "NumLock\nIndicator",
 			"title": "NumLock Indicator",
 			"shortName": "Numlock_Ind"
-                },
-                {
+		},
+		{
 			"name": "Sleep\nTrigger",
 			"title": "Trigger Sleep",
 			"shortName": "Sleep_Trg"
-                },
+		},
 		{
 			"name": "Game\nMode",
 			"title": "Trigger Game Mode",
 			"shortName": "Game_Mode"
-                },
-                {
+		},
+		{
 			"name": "Caps_Word\nTrigger",
 			"title": "Trigger Caps_Word",
 			"shortName": "Caps_Word"
-                },
-                {
-                        "name": "Win_Lock\nTrigger",
-                        "title": "Win_Lock",
-                        "shortName": "Win_Lock"
-                }
+		},
+		{
+			"name": "Win_Lock\nTrigger",
+			"title": "Win_Lock",
+			"shortName": "Win_Lock"
+		},
+		{
+			"name": "Debounce\nIncrease",
+			"title": "Debounce Increase",
+			"shortName": "Debounce_I"
+		},
+		{
+			"name": "Debounce\nDecrease",
+			"title": "Debounce Decrease",
+			"shortName": "Debounce_D"
+		},
+		{
+			"name": "Debounce\nType",
+			"title": "Debounce Type",
+			"shortName": "Debounce_T"
+		},
+			"name": "Sleep\nIncrease",
+			"title": "Light Sleep Increase",
+			"shortName": "Sleep_I"
+		},
+		{
+			"name": "Sleep\nDecrease",
+			"title": "Light Sleep Decrease",
+			"shortName": "Sleep_D"
+		}
+
 	]
 }
