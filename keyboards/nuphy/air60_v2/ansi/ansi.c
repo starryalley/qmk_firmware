@@ -40,7 +40,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (!game_mode_enable) { return true; }
+    if (!game_mode_enable) { return false; }
     uint8_t socd_array[] = { SOCD_KEYS };
     for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
         if ( keycode != socd_array[idx] ) { continue; }
