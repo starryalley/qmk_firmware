@@ -530,7 +530,8 @@ void game_mode_tweak(void)
 void reset_led_idx(void) {
     led_idx.KC_CAPS = get_led_idx(KC_CAPS);
     led_idx.KC_LGUI = get_led_idx(KC_LGUI);
-    led_idx.KC_NUM  = get_led_idx(NUMLOCK_INS);
+    led_idx.KC_NUM  = get_led_idx(KC_NUM);
+    if (led_idx.KC_NUM == UINT8_MAX) { led_idx.KC_NUM  = get_led_idx(NUMLOCK_INS); }
     led_idx.KC_D    = get_led_idx(KC_D);
     led_idx.KC_G    = get_led_idx(KC_G);
     led_idx.KC_F1   = get_led_idx(KC_F1);
