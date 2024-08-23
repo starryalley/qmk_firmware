@@ -75,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      CAPS_WORD,   _______,     _______,     DEBOUNCE_T,      _______,     GAME_MODE,   _______,     _______,     SOCD_TOG,    _______,         _______,     _______,                   _______,
      _______,     _______,     _______,     _______,         _______,     NUMLOCK_IND, _______,     _______,     SIDE_SPD,    SIDE_SPI,        _______,     _______,     SIDE_VAI,     _______,
      _______,     _______,     _______,                                                _______,                               _______,         _______,     SIDE_MOD,    SIDE_VAD,     SIDE_HUI)
-}
+};
 
 const is31fl3733_led_t PROGMEM g_is31fl3733_leds[RGB_MATRIX_LED_COUNT] = {
     {0, A_16,   B_16,   C_16},      // "Esc"
