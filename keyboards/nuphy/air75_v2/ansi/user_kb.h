@@ -170,6 +170,7 @@ typedef struct
     uint8_t game_rgb_sat;
     uint8_t game_debounce_ms;
     uint8_t game_debounce_type;
+    uint8_t socd_mode;
     uint8_t retain1;
     uint8_t retain2;
 } user_config_t;
@@ -187,6 +188,7 @@ typedef struct
     uint8_t RF_DFU;
     uint8_t KC_F12;
     uint8_t KC_GRV;
+    uint8_t SOCD_TOG;
 } led_index_t;
 
 extern led_index_t        led_idx;
@@ -230,6 +232,8 @@ extern uint16_t           left_pressed;
 extern uint16_t           right_pressed;
 
 extern bool               is_side_rgb_off(void);
+extern void               user_config_override(void);
+extern void               game_config_override(void);
 
 void    dev_sts_sync(void);
 void    rf_uart_init(void);

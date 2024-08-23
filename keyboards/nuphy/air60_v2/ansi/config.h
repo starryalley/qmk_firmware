@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_MATRIX_LED_COUNT                (DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL)
 
 #define WAIT_US_TIMER                       GPTD14
-#define EECONFIG_KB_DATA_SIZE               24
+#define EECONFIG_KB_DATA_SIZE               25
 #define GPIO_INPUT_PIN_DELAY                6
 #define RF_QUEUE_SIZE                       64
 

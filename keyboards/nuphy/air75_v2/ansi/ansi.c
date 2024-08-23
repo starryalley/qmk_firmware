@@ -40,7 +40,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (!game_mode_enable) { return false; }
+    if (!user_config.socd_mode) { return false; }
     uint8_t socd_array[] = { SOCD_KEYS };
     for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
         if ( keycode != socd_array[idx] ) { continue; }
@@ -73,6 +73,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case DEBOUNCE_I:
         case DEBOUNCE_D:
         case DEBOUNCE_T:
+        case SOCD_TOG:
             call_update_eeprom_data(&user_update);
             return true;
 
@@ -501,6 +502,17 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 #ifndef NO_DEBUG
                 dprintf("light sleep time:    %dmin\n", user_config.light_sleep);
 #endif
+            }
+            return false;
+
+        case SOCD_TOG:
+            if (record->event.pressed) {
+                user_config.socd_mode = !user_config.socd_mode;
+#ifndef NO_DEBUG
+                dprintf("SOCD:    %s\n", user_config.socd_mode ? "Enabled" : "Disabled");
+#endif
+                signal_rgb_led(user_config.socd_mode, 1, led_idx.SOCD_TOG, UINT8_MAX, 3000);
+
             }
             return false;
 

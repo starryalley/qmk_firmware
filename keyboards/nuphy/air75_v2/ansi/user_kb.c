@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "mcu_pwr.h"
 #include "color.h"
+#include "settings.h"
 
 user_config_t   user_config;
 user_config_t   read_user_config;
@@ -488,16 +489,22 @@ void game_mode_tweak(void)
 }
 
 void reset_led_idx(void) {
-    led_idx.KC_CAPS = get_led_idx(KC_CAPS);
-    led_idx.KC_LGUI = get_led_idx(KC_LGUI);
-    led_idx.KC_NUM  = get_led_idx(KC_NUM);
-    if (led_idx.KC_NUM == UINT8_MAX) { led_idx.KC_NUM  = get_led_idx(NUMLOCK_INS); }
-    led_idx.KC_D    = get_led_idx(KC_D);
-    led_idx.KC_G    = get_led_idx(KC_G);
-    led_idx.KC_F1   = get_led_idx(KC_F1);
-    led_idx.RF_DFU  = get_led_idx(RF_DFU);
-    led_idx.KC_F12  = get_led_idx(KC_F12);
-    led_idx.KC_GRV  = get_led_idx(KC_GRV);
+    led_idx.KC_CAPS  = get_led_idx(KC_CAPS);
+    led_idx.KC_LGUI  = get_led_idx(KC_LGUI);
+
+    uint16_t numlock_keys[4] = { KC_NUM, NUMLOCK_INS, KC_INS, KC_MINS };
+    for (uint8_t i = 0; i < sizeof_array(numlock_keys); i++) {
+        led_idx.KC_NUM  = get_led_idx(numlock_keys[i]);
+        if (led_idx.KC_NUM != UINT8_MAX) { break; }
+    }
+
+    led_idx.KC_D     = get_led_idx(DEBOUNCE_T);
+    led_idx.KC_G     = get_led_idx(GAME_MODE);
+    led_idx.KC_F1    = get_led_idx(KC_F1);
+    led_idx.RF_DFU   = get_led_idx(RF_DFU);
+    led_idx.SOCD_TOG = get_led_idx(SOCD_TOG);
+    led_idx.KC_F12   = get_led_idx(KC_F12);
+    led_idx.KC_GRV   = get_led_idx(KC_GRV);
 }
 
 uint8_t get_led_idx(uint16_t keycode) {
@@ -598,8 +605,10 @@ void user_config_reset(void) {
     user_config.alt_light_sleep         = 6;
     user_config.caps_word_enable        = 1;
     user_config.numlock_state           = 1;
-    game_config_reset(0);
+    user_config.socd_mode               = 0;
     keymap_config.no_gui                = 0;
+    game_config_reset(0);
+    user_config_override();
     eeconfig_update_kb_datablock(&user_config);
 }
 
@@ -613,6 +622,7 @@ void game_config_reset(uint8_t save_to_eeprom) {
     user_config.game_rgb_sat           = RGB_MATRIX_DEFAULT_SAT;
     user_config.game_debounce_ms       = DEBOUNCE;
     user_config.game_debounce_type     = 1;
+    game_config_override();
     if (save_to_eeprom) { eeconfig_update_kb_datablock(&user_config); }
 }
 

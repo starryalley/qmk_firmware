@@ -59,6 +59,7 @@ enum custom_keycodes {
     DEBOUNCE_T,
 
     SLEEP_I,
-    SLEEP_D
+    SLEEP_D,
 
+    SOCD_TOG
 };

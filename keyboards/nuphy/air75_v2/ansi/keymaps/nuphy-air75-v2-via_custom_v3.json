@@ -36,6 +36,7 @@
 				"options": [
 					"All Off",
 					"Solid Color",
+					"Alphas Mods",
 					"Gradient Up/Down",
 					"Gradient Left/Right",
 					"Breathing",
@@ -48,9 +49,9 @@
 					"Cycle All",
 					"Cycle Left/Right",
 					"Cycle Up/Down",
-					"Rainbow Moving Chevron",
 					"Cycle Out/In",
 					"Cycle Out/In Dual",
+					"Rainbow Moving Chevron",
 					"Cycle Pinwheel",
 					"Cycle Spiral",
 					"Dual Beacon",
@@ -62,6 +63,9 @@
 					"Hue Breathing",
 					"Hue Pendulum",
 					"Hue Wave",
+					"Pixel Fractal",
+					"Pixel Flow",
+					"Pixel Rain",
 					"Typing Heatmap",
 					"Digital Rain",
 					"Reactive Simple",
@@ -75,7 +79,13 @@
 					"Splash",
 					"MultiSplash",
 					"Solid Splash",
-					"Solid MultiSplash"
+					"Solid MultiSplash",
+					"Starlight",
+					"Starlight Dual Hue",
+					"Starlight Dual Sat",
+					"Riverflow",
+					"Effect Max",
+					"Game Mode"
 				]
 			},
 			{
@@ -274,7 +284,11 @@
 			"name": "Sleep\nDecrease",
 			"title": "Light Sleep Decrease",
 			"shortName": "Sleep_D"
+		},
+		{
+			"name": "SOCD\nToggle",
+			"title": "SOCD Toggle",
+			"shortName": "Socd_Tog"
 		}
-
 	]
 }
