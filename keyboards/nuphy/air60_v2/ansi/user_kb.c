@@ -510,10 +510,10 @@ void reset_led_idx(void) {
 
 uint8_t get_led_idx(uint16_t keycode) {
     uint8_t current_default = dev_info.sys_sw_state == SYS_SW_WIN ? WIN_BASE : MAC_BASE;
-    uint8_t check_layers[3] = { current_default, (current_default + 1), M_LAYER };
+    uint8_t check_layers[4] = { current_default, (current_default + 1), (current_default + 2), M_LAYER };
     for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
         for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-            for (uint8_t layer = 0; layer < 3; ++layer) {
+            for (uint8_t layer = 0; layer < 4; ++layer) {
                 if (keycode_at_keymap_location(check_layers[layer], row, col) == keycode) {
                     return g_led_config.matrix_co[row][col];
                 }
