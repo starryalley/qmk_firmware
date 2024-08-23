@@ -3,44 +3,13 @@
 The following customizations were applied on top of the stock firmware. 
 
 -  Fn + M + O Changes the side light to display on either left side or right side or alternating sides every 1 minute.
+
 -  Numlock indicator using side leds while color
--  Keyboard has 3 sleep levels: 
-  1. Leds off, RF module on, MCU on
-  2. Leds off, RF module off, MCU on
-  3. Leds off, RF module off, MCU standby/sleep 
 
-  By default keyboard will go to sleep level 1 in 2 minutes and sleep level 2 in 6 minutes (when using 2.4G dongle) or in 30 minutes (when using BT connection)
-  If 2.4G is selected and there is no connectivity in 15 seconds keyboard will enter level 3 sleep.
-  If BT is selected and there is no connectivity in 60 seconds keyboard will enter level 3 sleep.
+-  FN + M + N shorcut will change the led indicator from side leds to KC_NUM key. If KC_NUM does not exist it will look for KC_INS and NUMLOCK_INS
 
-  To change sleep mode you can use Fn + ]:
-  When on default mode (explained above, the right side leds will flash 4 times green)
+-  New custom key: NUMLOCK_INS. When held for more than 300ms it will trigger NUM_LOCK when pressed it will act as KC_INS
 
-  The next mode will flash 4 times orange (This is actually the default sleep policy for Nuphy firmware version 1.1.3). 
-  In this mode the following applies:
-  Keyboard will go to sleep level 1 in 6 minutes
-  If 2.4G or BT is selected and there is no connectivity in 120 seconds(BT) or 30 seconds (RF 2.4G) keyboard will enter level 2 sleep.
-
-  On the last sleep mode the right side leds will flash 4 times red.
-  In this mode the keyboard will never sleep.
-
-  Side indicators will flash blue for 0.3s when board enters level 3 sleep mode, as an indicator.
-
--  Fn + B will show current battery levels using numbers from 1 to 0 (0 means 100%). The color will be red, yellow, light green, dark green) based on battery level.
-   Last led will have a different color based on battery percentage as well. 
-   Example:
-   if 1 to 4 lights up and the last led that lights up 5 is dark green color you will have between 47 and 50% battery
-   if 1 to 4 lights up and the last led that lights up 5 is light green color you will have between 44 and 46 % battery
-   if 1 to 4 lights up and the last led that lights up 5 is red color you will have between 41 and 43 % battery
-
--  The custom MAC keys now have double functionality:
-    MAC_VOICE if Mac mode selected and F5             if Win mode is selected
-    TASK      if Mac mode selected and KC_CALC        if Win mode is selected
-    SEARCH    if Mac mode selected and KC_LCTL + KC_F if Win mode is selected
-    PRT_SCR   if Mac mode selected and PrintScreen    if Win mode is selected
-    PRT_AREA  if Mac mode selected and PrintScreen    if Win mode is selected
-
--  New custom key: NUMLOCK_INS. On longpress it will act as NUMLOCK and on short press as INS.
 -  New algorithm to prevent unnecessary EEPROM writes. When you change RGB modes or side lights it will only save the setting to EEPROM after 30 seconds.
    If for instance your need to press mode button for 5 times to reach your favourite RGB effect, normally you will get 1 EEPROM save for each press (5 EEPROM writes).
    With the new algorithm you will get 1 write to EEPROM after 40 seconds from last press. As a side efect if you change something and you shutdown the keyboard immediately you will lose the change.
@@ -51,18 +20,127 @@ The following customizations were applied on top of the stock firmware.
 
 -  The system indicators now have 3 levels of brightness (before there was only 1 level) that are dependend on the side light brightness. Thus for example capslock will no longer light at full brightness if side leds have a lower brightness selected.
 
-- Default startup LED brightness is set to half of max. Default RGB effect is RGB_MATRIX_CYCLE_LEFT_RIGHT
-- Default tapping has been reduced to 6ms (from 8ms default) and debounce decreased to 1 ms
-- Deep sleep algorithm (level 3 sleep) is applied using code from nuphy / jincao1
-- Fix keyboard randomly crashing/freezing (algorithm from jincao1 with small modifications)
-- Fix LED lights not powering down when not used. Because of how the keyboard is build, both rgb and side leds need to be off, they can't be controlled individually (algorithm from jincao1)
-- Fix keystrokes being lost on wake. Wake keystrokes will appear after a very short delay while board re-establishes connection. BT may not be as reliable as the dongle.
-  This is achieved through a buffer of 64 key actions (key down and key up are 2 actions). The buffer is cleared if connection is not established within 1s after the last action.
-  Key events after the buffer is full will also be dropped. (Buffer algorithm taken from jincao1)
-- Enhance keyboard reports transmission logic to greatly reduce stuck/lost key strokes. It may still occasionally drop/repeat keys but it's rare. (algorithm from jincao1 with small modifications)
-- Side light algorithms are modified in order to reduce firmware size and to make animations more smooth. On the lowest level of brightness for side leds you might see some jerkiness on some of the breath algorithm. This is because the lowest level of brightness is lower than standard Nuphy.
+-  The custom MAC keys now have double functionality:
+    MAC_VOICE if Mac mode selected and F5             if Win mode is selected
+    TASK      if Mac mode selected and KC_CALC        if Win mode is selected
+    SEARCH    if Mac mode selected and KC_LCTL + KC_F if Win mode is selected
+    PRT_SCR   if Mac mode selected and PrintScreen    if Win mode is selected
+    PRT_AREA  if Mac mode selected and PrintScreen    if Win mode is selected
+
+-  Fn + B will show current battery levels using numbers from 1 to 0 (0 means 100%). The color will be red, yellow, light green, dark green) based on battery level.
+   Last led will have a different color based on battery percentage as well.
+   Example:
+   if 1 to 4 lights up and the last led that lights up 5 is dark green color you will have between 47 and 50% battery
+   if 1 to 4 lights up and the last led that lights up 5 is light green color you will have between 44 and 46 % battery
+   if 1 to 4 lights up and the last led that lights up 5 is red color you will have between 41 and 43 % battery
+
+-  Default startup LED brightness is set to half of max. Default RGB effect is RGB_MATRIX_CYCLE_LEFT_RIGHT
+
+-  Default tapping has been reduced to 2ms (from 8ms default)
+
+-  LTO enabled to reduce firmware size
+
+-  Side light algorithms are modified in order to reduce firmware size and to make animations more smooth.
+
+-  Enhance keyboard reports transmission logic to greatly reduce stuck/lost key strokes. It may still occasionally drop/repeat keys but it's rare. (algorithm from jincao1 with small modifications)
+
+-  Fix keyboard randomly crashing/freezing (algorithm from jincao1 with small modifications)
+
+-  MCU Deep / Light sleep algorithm is applied using code from nuphy / jincao1
+
+-  Fix LED lights not powering down when not used.
+
+-  Fix keystrokes being lost on wake. Wake keystrokes will appear after a very short delay while board re-establishes connection. BT may not be as reliable as the dongle.
+   This is achieved through a buffer of 64 key actions (key down and key up are 2 actions). The buffer is cleared if connection is not established within 1s after the last action.
+   Key events after the buffer is full will also be dropped. (Buffer algorithm taken from jincao1)
+
+-  FN + M + F1 => enables Debug mode. This mode will show messages in console including matrix scan rate and various settings changes
+
+-  FN + M + ESC => will reboot keyboard. If you do not unpress the ESC key, it will enter bootmode so you can load new firmware.
+
+-  FN + M + F2 => Will enter DFU mode so you can upload new RF firmware. The key will remain lit up as red until you reboot the keyboard. This mode is activated only when keyboard is connected to laptop/computer via USB
+
+-  All QMK animations are now included in this firmware
+
+-  FN + M + ] => will trigger MCU deep sleep imediately (only if keyboard is not charging or connected via USB)
+
+-  FN + M + G => enabled GAME MODE. This Mode disables some rgb light functions to ensure maximum scan rate is achived. The G letter will light up green when mode is active and red when game mode is disabled. Long pressing FN + M + G will reset game mode settings to default.
+   RGB animations and Side light animations can be modified by user. The new settings will be saved after 30 seconds. But the adjustment is limited.
+
+-  CAPS_WORD is enabled by default. Double press Left Shift key to activate it for 5 seconds. CAPS_LOCK will light up light blue. This function can be disabled (CAPS_WORD) when holding FN + M + CAPS_LOCK. Also by default this is disabled when GAME MODE is active.
+
+-  FM + M + WIN => Will Enable or Disable the WIN key (useful in some games) (also called WIN_LOCK function)
+
+-  FN + M + K => SOCD_MODE This will Enable or Disable SOCD / Rapid Trigger / Key Cancelation (custom algorithm):
+
+Keys   | .. | A. | AD | A.
+Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup)
+
+-  Variable matrix scan rate in order to help with battery usage. After 10 second of idle time the Light MCU sleep is enabled and scan rate goes to ~ 700. After 30 seconds of idle time scan rate further decreases to ~ 300.
+Matrix scan rate default: ~ 1700 - 1900
+Matrix scan rate keyboard is idle : ~ 300 - 700
+Matrix scan rate in GAME_MODE: ~ 3200 - 3900
+
+-  Debounce is set by default to 5ms and debounce type is asym_eager_defer_pk 
+
+-  Debounce type can be modified by key DEBOUNCE_T (FN + M + D).
+Debounce algorithms that can be selected are: 
+  asym_eager_defer_pk (this is the default) => GREEN light
+  sym_eager_pr => YELLOW light
+  sym_defer_pk (actually a variation of it) => RED light
+
+- Debounce time is also selectable:
+To select press:
+  DEBOUNCE_D (FN + M + F11) to decrease
+  DEBOUNCE_I (FN + M + F12) to increase
+
+the steps will be:
+  1 from 1 - 10 => will light up F1-F10 in green
+  2 from 12 - 30 => will light up F1-F10 in yellow
+  5 from 35 - 75 => will light up F1-F10 in red
+  and 100 ms (max) => will light up in purple
+
+Example:
+  Debounce 6 => F1-F6 light up in green color
+  Debounce 18 => F1-F4 light up in yellow color
+  Debounce 65 => F1-F7 light up in red color
+  Debounce 100 => F1-F12 in purple color
+
+  Setting for debounce (type and value in ms) are saved differently for game mode and normal mode so you will have 2 separate settings
+  The settings are also show when transitioning from game mode to normal mode in QMK Console if debug is activated
+
+-  New RGB animation available (including in GAME mode). When selected it will light up: ESC, A , S ,D, W and arrow keys
+
+-  New RGB commands are available but not set to any keys: RGB_RMOD, RGB_HUD, RGB_M_P, RGB_SAI, RGB_SAD, RGB_TOG
+
+-  Light Sleep can be adjusted from 1 minute to 100 minutes using keys SLEEP_D and SLEEP_I (FN + M + '-' and FN + M + '+'). 
+   Adjustment are different depending on mode: 
+   Example: by default 2 minutes until light sleep when deep sleep is enabled (sleep mode green), 6 minutes when deep sleep disabled (sleep mode yellow), no adjustment for no sleep (sleep mode red).
+   So you can setup up different settings based on sleep mode. The adjustment is similar to the example for debounce explained above.
+
+-  Version will be shown when Debug is enabled like (example):
+    Keyboard: nuphy/air75_v2/ansi @ QMK 0.25.10-62-g2a4e8d | BUILD: 2024-07-09-09:31:29 (1e4798ae3e)
+
+- Keyboard had 3 sleep settings selectable via FN + ].
+  1. Side led green. Behaviour:
+
+   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700
+   - After 2 minutes (adjustable), side lights are turned off
+   - After 6 minutes (4 minutes after side lights are turned off), RF goes to sleep (if you are connected via 2.4G), MCU goes do deep sleep. If you are connected via BT the RF will go to sleep after 30 minutes but the MCU will go to deep sleep after 6 minutes.
+
+  2. Side led yellow. Behaviour:
+   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700
+   - After 6 minutes (adjustable), side lights are turned off
+   - After 10 minutes (4 minutes after side lights are turned off), RF goes to sleep (if you are connected via 2.4G), if you are connected via BT the RF will go to sleep after 30 minutes. MCU does not go to deep sleep.
+
+  3. Side led red. Behaviour:
+   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700
+   - Side lights do not go to sleep. RF goes to sleep after 30 minutes. MCU does not go to deep sleep
+
+  Side indicators will flash blue for 0.5s when board enters MCU deep sleep mode when on BT and will falsh green for 0.5s when on 2.4G, as an indicator.
+  Keyboard will not enter sleep regardless of settings if it is charging or if it is connected via USB.
+  Keyboard will not enter sleep if GAME MODE is active
 
 ## Author
 
 [@adi4086](https://github.com/adi4086)
-

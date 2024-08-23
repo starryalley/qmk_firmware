@@ -54,9 +54,9 @@ bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
         }
 
         if (record->event.pressed) {
-            if (right_pressed + left_pressed > 3) { unregister_code(socd_array[idx]); }
+            if (right_pressed + left_pressed > 2) { unregister_code(socd_array[idx]); }
         } else {
-            if (right_pressed + left_pressed > 3) { register_code(socd_array[idx]); }
+            if (right_pressed + left_pressed > 2) { register_code(socd_array[idx]); }
         }
         return true;
     }
