@@ -21,11 +21,11 @@ The following customizations were applied on top of the stock firmware.
 -  The system indicators now have 3 levels of brightness (before there was only 1 level) that are dependend on the side light brightness. Thus for example capslock will no longer light at full brightness if side leds have a lower brightness selected.
 
 -  The custom MAC keys now have double functionality: <br />
-<pre>    MAC_VOICE if Mac mode selected and F5             if Win mode is selected </pre><br />
-<pre>    TASK      if Mac mode selected and KC_CALC        if Win mode is selected </pre><br />
-<pre>    SEARCH    if Mac mode selected and KC_LCTL + KC_F if Win mode is selected </pre><br />
-<pre>    PRT_SCR   if Mac mode selected and PrintScreen    if Win mode is selected </pre><br />
-<pre>    PRT_AREA  if Mac mode selected and PrintScreen    if Win mode is selected </pre><br />
+<pre>    MAC_VOICE if Mac mode selected and F5             if Win mode is selected </pre>
+<pre>    TASK      if Mac mode selected and KC_CALC        if Win mode is selected </pre>
+<pre>    SEARCH    if Mac mode selected and KC_LCTL + KC_F if Win mode is selected </pre>
+<pre>    PRT_SCR   if Mac mode selected and PrintScreen    if Win mode is selected </pre>
+<pre>    PRT_AREA  if Mac mode selected and PrintScreen    if Win mode is selected </pre>
 
 -  Fn + B will show current battery levels using numbers from 1 to 0 (0 means 100%). The color will be red, yellow, light green, dark green) based on battery level. <br />
    Last led will have a different color based on battery percentage as well. <br />
@@ -72,22 +72,22 @@ The following customizations were applied on top of the stock firmware.
 -  FM + M + WIN => Will Enable or Disable the WIN key (useful in some games) (also called WIN_LOCK function)
 
 -  FN + M + K => SOCD_TOG This will allow you to choose the SOCD / Rapid Trigger / Key Cancelation mode (custom algorithm): <br />
- <br />
+
 (0) Disabled: <br />
-<pre>Keys   | .. | A. | AD | A. </pre><br />
-<pre>Report | .. | A. | AD | A. </pre><br />
- <br />
+<pre>Keys   | .. | A. | AD | A. </pre>
+<pre>Report | .. | A. | AD | A. </pre>
+ 
 (1) Cancellation: <br />
-<pre>Keys   | .. | A. | AD | A. </pre><br />
-<pre>Report | .. | A. | .D | .. ----- (D cancels A, no restore on D keyup) </pre><br />
- <br />
+<pre>Keys   | .. | A. | AD | A. </pre>
+<pre>Report | .. | A. | .D | .. ----- (D cancels A, no restore on D keyup) </pre>
+ 
 (2) Exclusion: <br />
-<pre>Keys   | .. | A. | AD | A. </pre><br />
-<pre>Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup) </pre><br />
- <br />
+<pre>Keys   | .. | A. | AD | A. </pre>
+<pre>Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup) </pre>
+ 
 (3) Nullification: <br />
-<pre>Keys   | .. | A. | AD | A. </pre><br />
-<pre>Report | .. | A. | .. | A. ----- (D nullifies A, neither registered, A restored on D keyup) </pre><br />
+<pre>Keys   | .. | A. | AD | A. </pre>
+<pre>Report | .. | A. | .. | A. ----- (D nullifies A, neither registered, A restored on D keyup) </pre>
 
 
 -  Variable matrix scan rate in order to help with battery usage. After 10 second of idle time the Light MCU sleep is enabled and scan rate goes to ~ 700. After 30 seconds of idle time scan rate further decreases to ~ 300. <br />
