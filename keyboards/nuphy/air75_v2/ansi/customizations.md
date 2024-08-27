@@ -74,8 +74,8 @@ The following customizations were applied on top of the stock firmware.
 -  FN + M + K => SOCD_TOG This will allow you to choose the SOCD / Rapid Trigger / Key Cancelation mode (custom algorithm): <br />
 
 (0) Disabled: <br />
-<pre>Keys   | .. | A. | AD | A. </pre>
-<pre>Report | .. | A. | AD | A. </pre>
+<pre>Keys   | .. | A. | AD | A.
+Report | .. | A. | AD | A. </pre>
  
 (1) Cancellation: <br />
 <pre>Keys   | .. | A. | AD | A. </pre>
