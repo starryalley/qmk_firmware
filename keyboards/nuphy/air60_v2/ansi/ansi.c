@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mcu_pwr.h"
 #include "version.h"
 
+char            socd_type[4][14]  = { "disabled", "cancellation", "exclusion", "nullification" };
+
 /* qmk pre-process record */
 bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     no_act_time      = 0;
@@ -40,7 +42,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (!user_config.socd_mode) { return false; }
+    if (!user_config.socd_mode) { return true; }
     uint8_t socd_array[] = { SOCD_KEYS };
     for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
         if ( keycode != socd_array[idx] ) { continue; }
@@ -54,13 +56,18 @@ bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
         }
 
         if (record->event.pressed) {
-            if (right_pressed + left_pressed > 2) { unregister_code(socd_array[idx]); }
+            if (right_pressed + left_pressed > 2) {
+                unregister_code(socd_array[idx]);
+                if (user_config.socd_mode == 3) { return false; }
+            }
         } else {
-            if (right_pressed + left_pressed > 2) { register_code(socd_array[idx]); }
+            if (right_pressed + left_pressed > 2) {
+                if (user_config.socd_mode >= 2) { register_code(socd_array[idx]); }
+            }
         }
         return true;
     }
-    return false;
+    return true;
 }
 
 /* qmk process record user*/
@@ -139,8 +146,8 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (process_record_socd(keycode, record)) {
-        return true;
+    if (!process_record_socd(keycode, record)) {
+        return false;
     }
 
     switch (keycode) {
@@ -505,12 +512,11 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case SOCD_TOG:
             if (record->event.pressed) {
-                user_config.socd_mode = !user_config.socd_mode;
+                user_config.socd_mode = (user_config.socd_mode + 1) % 4;
 #ifndef NO_DEBUG
-                dprintf("SOCD:    %s\n", user_config.socd_mode ? "Enabled" : "Disabled");
+                dprintf("SOCD:    %s(%d)\n", socd_type[user_config.socd_mode], user_config.socd_mode);
 #endif
-                signal_rgb_led(user_config.socd_mode, 1, led_idx.SOCD_TOG, UINT8_MAX, 3000);
-
+                signal_rgb_led(user_config.socd_mode * 2, 0, led_idx.SOCD_TOG, UINT8_MAX, 3000);
             }
             return false;
 
