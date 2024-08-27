@@ -181,8 +181,9 @@ void side_colour_control(uint8_t color) {
  */
 void side_mode_control(uint8_t dir) {
     if (dir) {
-        user_config.ee_side_mode++;
-        if (user_config.ee_side_mode > SIDE_OFF) { user_config.ee_side_mode = 0; }
+        // user_config.ee_side_mode++;
+        // if (user_config.ee_side_mode > SIDE_OFF) { user_config.ee_side_mode = 0; }
+        user_config.ee_side_mode = (user_config.ee_side_mode + 1) % (SIDE_OFF + 1);
     } else {
         if (user_config.ee_side_mode > 0) { user_config.ee_side_mode--; }
         else { user_config.ee_side_mode = SIDE_OFF; }
