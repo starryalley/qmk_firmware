@@ -42,7 +42,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (!user_config.socd_mode) { return true; }
+    if (user_config.socd_mode == 0) { return true; }
     uint8_t socd_array[] = { SOCD_KEYS };
     for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
         if ( keycode != socd_array[idx] ) { continue; }
