@@ -71,10 +71,24 @@ The following customizations were applied on top of the stock firmware.
 
 -  FM + M + WIN => Will Enable or Disable the WIN key (useful in some games) (also called WIN_LOCK function)
 
--  FN + M + K => SOCD_MODE This will Enable or Disable SOCD / Rapid Trigger / Key Cancelation (custom algorithm):
+-  FN + M + K => SOCD_TOG This will allow you to choose the SOCD / Rapid Trigger / Key Cancelation mode (custom algorithm):
 
+(0) Disabled:
+Keys   | .. | A. | AD | A.
+Report | .. | A. | AD | A.
+
+(1) Cancellation:
+Keys   | .. | A. | AD | A.
+Report | .. | A. | .D | .. ----- (D cancels A, no restore on D keyup)
+
+(2) Exclusion:
 Keys   | .. | A. | AD | A.
 Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup)
+
+(3) Nullification:
+Keys   | .. | A. | AD | A.
+Report | .. | A. | .. | A. ----- (D nullifies A, neither registered, A restored on D keyup)
+
 
 -  Variable matrix scan rate in order to help with battery usage. After 10 second of idle time the Light MCU sleep is enabled and scan rate goes to ~ 700. After 30 seconds of idle time scan rate further decreases to ~ 300.
 Matrix scan rate default: ~ 1700 - 1900
