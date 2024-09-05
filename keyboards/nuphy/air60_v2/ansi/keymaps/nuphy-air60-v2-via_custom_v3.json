@@ -1,7 +1,7 @@
 {
 	"name": "NuPhy Air60 V2",
 	"vendorId": "0x19F5",
-	"productId": "0x3265",
+	"productId": "0x3255",
 	"matrix": {
 		"rows": 6,
 		"cols": 17
