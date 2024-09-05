@@ -86,3 +86,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define RGB_MATRIX_DISABLE_KEYCODES
 // #define RGB_MATRIX_SOLID_REACTIVE_GRADIENT_MODE
+
+// tap-hold settings
+#define QUICK_TAP_TERM 100
