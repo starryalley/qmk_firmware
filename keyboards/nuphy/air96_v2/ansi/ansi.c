@@ -600,6 +600,6 @@ void housekeeping_task_kb(void) {
 
     sleep_handle();
 
-    if (no_act_time > 1000) { idle_enter_sleep(); }
+    idle_enter_sleep();
 
 }
