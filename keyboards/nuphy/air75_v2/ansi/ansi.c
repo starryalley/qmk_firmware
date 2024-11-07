@@ -42,7 +42,7 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (!user_config.socd_mode) { return true; }
+    if (user_config.socd_mode == 0) { return true; }
     uint8_t socd_array[] = { SOCD_KEYS };
     for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
         if ( keycode != socd_array[idx] ) { continue; }
@@ -170,7 +170,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case LNK_RF ... LNK_BLE3:
             if (record->event.pressed) {
                 if (dev_info.link_mode != LINK_USB) {
-                    rf_sw_temp    = keycode - 2;
+                    rf_sw_temp    = keycode - LNK_RF;
                     f_rf_sw_press = 1;
                     break_all_key();
                 }
@@ -600,6 +600,6 @@ void housekeeping_task_kb(void) {
 
     sleep_handle();
 
-    if (no_act_time > 1000) { idle_enter_sleep(); }
+    idle_enter_sleep();
 
 }

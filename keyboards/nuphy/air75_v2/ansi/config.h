@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define WS2812_SPI_USE_CIRCULAR_BUFFER
 #define EECONFIG_KB_DATA_SIZE               25
-#define GPIO_INPUT_PIN_DELAY                6
+#define GPIO_INPUT_PIN_DELAY                12
 #define RF_QUEUE_SIZE                       64
 
 #define RGB_MATRIX_DISABLE_KEYCODES

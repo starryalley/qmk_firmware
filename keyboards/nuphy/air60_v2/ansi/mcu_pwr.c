@@ -425,6 +425,7 @@ OSAL_IRQ_HANDLER(STM32_TIM6_HANDLER) {
 // For this to work you need to call m_timer6_init() in ansi.c post kb init user.
 // That enables the STM32_TIM6_HANDLER but I think it runs on the interrupt interval of the TIM6 timer.
 void idle_enter_sleep(void) {
+    if (no_act_time < 1000 || user_config.sleep_mode != 1) { return; }
     TIM6->CNT      = 0;
     PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
 }
